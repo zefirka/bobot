@@ -99,9 +99,15 @@ class Bot():
         return info.get('result')
 
     def send(self, chatId, message):
-        "Sends message"
+        """
+            Sends message to user
+            @public
+            @param {str} chatId
+            @param  {str} message
+            @return {json}
+        """
 
-        call('sendMessage', {
+        return call('sendMessage', {
             'chat_id': chatId,
             'text': message
         })
@@ -116,9 +122,13 @@ class Bot():
             self.__execRule(rule, update)
 
     def rule(self, rules):
-        "Assign rule to bot"
+        """
+            Assign rules to bot
+            @public
+            @param {list[Rule]|Rule} rules
+        """
 
-        if isinstance(rules, list):
+        if not isinstance(rules, list):
             rules = [rules]
 
         for rule in rules:
@@ -132,6 +142,13 @@ class Bot():
             'match': lambda text: bool(re.compile(match, flags).match(text)),
             'response': response
         }))
+
+    def getUpdates(self, limit=None, offset=None):
+        "Call getUpdates method"
+        return call('getUpdates', {
+            'limit': limit,
+            'offset': offset
+        })
 
     def getToken(self):
         'Returns token'
