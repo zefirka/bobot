@@ -5,3 +5,5 @@
 
 from .bobot import init, setWebhook
 from .Rule import Rule
+from .Parser import Parser
+from .Response import Response

@@ -6,26 +6,16 @@
 import json
 import re
 
-from bobot.req import get
 from bobot.Rule import Rule
+from bobot.Response import Response
+
+from bobot.utils import isFn, execValue
+from bobot.req import get
 
 __token = None
 __api = 'https://api.telegram.org/bot{token}/{method}'
 
-def isFn(fn):
-    "Detect is argument a function"
-    return hasattr(fn, '__call__')
-
-def execValue(val, args=None):
-    """
-        Returns value if it's not a function, else returns value called with arguments (None by default)
-        @param {*|function}     val
-        @param {*}              [args]
-        @returns {*}
-    """
-    return val(args) if isFn(val) else val
-
-class Bot():
+class Bot(object):
     """
         Main Bot class
     """
@@ -67,11 +57,24 @@ class Bot():
         senderId = sender.get('id')
         username = sender.get('username', sender.get('first_name'))
 
+        body = text
+
+        if hasattr(rule, 'parse'):
+            body = rule.parse(text)
+
         matcher = self.__getMatcher(rule.match)
 
         if matcher(text):
-            if rule.response:
-                response = execValue(rule.response, update)
+            if hasattr(rule, 'register') and not self.clients.get(senderId):
+                self.clients[senderId] = self.register(sender, rule.register)
+
+            if hasattr(rule, 'action'):
+                rule.action(self, body)
+
+            if hasattr(rule, 'response') and isinstance(rule.response, Response):
+                return rule.response.run(update, self)
+            else:
+                response = execValue(rule.response, [body, self])
                 response = response.format(text=text, name=username)
 
                 self.send(senderId, response)
@@ -83,9 +86,11 @@ class Bot():
         self.rules.append(rule)
         return self.rules
 
-
+    #####################################################
+    #####################################################
     def __init__(self):
         self.rules = []
+        self.clients = {}
 
     def about(self):
         "Returns information about bot"
@@ -112,8 +117,25 @@ class Bot():
             'text': message
         })
 
+    def keyboard(self, chatId, text, keyboard):
+        "Sends keyboard to user"
+
+        return call('sendMessage', {
+            'chat_id': chatId,
+            'text': text,
+            'reply_markup': {
+                'keyboard': json.dumps(keyboard.get('keyboard')),
+                'resize_keyboard': keyboard.get('resize'),
+                'one_time_keyboard': keyboard.get('autohide')
+            }
+        })
+
     def process(self, update):
-        "Process update by bot's rules"
+        """
+            Process update by bot's rules
+            @public
+            @param {dict} update
+        """
 
         if not len(self.rules):
             return None
@@ -137,6 +159,10 @@ class Bot():
     def on(self, match, response, flags=0):
         "Subscribes to matching"
 
+        # Changelog
+        if isinstance(response, dict) or isinstance(response, list):
+            response = Response(response)
+
         self.rule(Rule({
             'name': match,
             'match': lambda text: bool(re.compile(match, flags).match(text)),
@@ -145,13 +171,21 @@ class Bot():
 
     def getUpdates(self, limit=None, offset=None):
         "Call getUpdates method"
+
         return call('getUpdates', {
             'limit': limit,
             'offset': offset
         })
 
+    def register(self, user, registerInfo={'id': 'id'}):
+        "Registers client to bot memory"
+        result = {}
+        for key in registerInfo:
+            result[key] = user.get(registerInfo[key])
+        return result
+
     def getToken(self):
-        'Returns token'
+        "Returns token"
 
         return __token
 

@@ -2,10 +2,10 @@
 
 from bobot.Errors import RuleNameError
 
-class Rule():
+class Rule(object):
     "Rules class"
 
-    __alowedRules = ['name', 'match', 'response', 'command']
+    __alowedRules = ['name', 'match', 'response', 'command', 'action', 'parse']
 
     def __init__(self, d):
         self.match = None
