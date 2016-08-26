@@ -1,8 +1,12 @@
 "Module containes Rule class"
 
+import re
+
 from bobot.Errors import RuleNameError
 from bobot.utils import execValue, isFn
 from bobot.Response import Response
+
+__retype = type(re.compile('re'))
 
 def getMatcher(match):
     "Return matcher by `match` value of Rule"
@@ -24,6 +28,10 @@ def getMatcher(match):
         "Mathing by equality"
         return text == match
 
+    def rematch(text):
+        "Mathing as regex"
+        return bool(match.match(text))
+
     if isFn(match):
         return fn
 
@@ -32,6 +40,10 @@ def getMatcher(match):
 
     if isinstance(match, str) or isinstance(match, int) or isinstance(match, float):
         return eq
+
+    if isinstance(match, __retype):
+        return rematch
+
 
 class Rule(object):
     "Rules class"
@@ -67,8 +79,7 @@ class Rule(object):
         body = text
 
         if hasattr(self, 'parse'):
-            parser = self.parse()
-            body = parser(text)
+            body = self.parse(text)
 
         matcher = getMatcher(self.match)
 
@@ -87,7 +98,7 @@ class Rule(object):
                     return response.run(update, bot)
                 else:
                     response = execValue(self.response, [body, bot])
-                    response = response.format(text=text, name=username)
+                    response = response.format(text=text, name=username, body=body)
 
                     bot.send(senderId, response)
 

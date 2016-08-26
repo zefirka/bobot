@@ -1,5 +1,9 @@
 # Changelog
 
+
+### 0.0.10
+ - + Added regular expressins into rule matchings
+
 ### 0.0.9
  - + Added documentation for Rules
  - + Added test server (requires Flask)

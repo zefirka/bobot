@@ -1,4 +1,9 @@
+import re
+
 from bobot.Rule import Rule
+from bobot.Parser import Parser
+
+parser = Parser()
 
 rules = [
 	Rule({
@@ -23,6 +28,15 @@ rules = [
 				'sendMessages': 'THIS IS SPARTA!!!'.split(' ')
 			}
 		]
+	}),
+	Rule({
+		'match': lambda text: 'parse' in text,
+		'parse': parser.parse,
+		'response': '{body}'
+	}),
+	Rule({
+		'match': re.compile(r'^regexp'),
+		'response': 'regexp included'
 	})
 ]
 
