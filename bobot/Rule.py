@@ -48,7 +48,20 @@ def getMatcher(match):
 class Rule(object):
     "Rules class"
 
-    __alowedRules = ['name', 'match', 'response', 'command', 'action', 'parse']
+    __alowedRules = ['name', 'match', 'response', 'command', 'action', 'parse', 'transform']
+
+    @staticmethod
+    def all(*args):
+        "Helper method"
+
+        def matcher(text):
+            "Matcher"
+            for match in args:
+                matcher = getMatcher(match)
+                if not matcher(text):
+                    return False
+            return True
+        return matcher
 
     def __init__(self, d):
         self.match = None
@@ -79,11 +92,14 @@ class Rule(object):
         body = text
 
         if hasattr(self, 'parse'):
-            body = self.parse(text)
+            body = self.parse(body)
 
         matcher = getMatcher(self.match)
 
-        if matcher(text):
+        if matcher(body):
+            if hasattr(self, 'transform'):
+                body = self.transform(body)
+
             if hasattr(self, 'register') and not bot.clients.get(senderId):
                 bot.clients[senderId] = bot.register(sender, self.register)
 
@@ -98,7 +114,7 @@ class Rule(object):
                     return response.run(update, bot)
                 else:
                     response = execValue(self.response, [body, bot])
-                    response = response.format(text=text, name=username, body=body)
+                    response = response.format(text=text, username=username, body=body)
 
                     bot.send(senderId, response)
 

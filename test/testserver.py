@@ -6,7 +6,7 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from flask import Flask, request
-from bobot import bobot
+from bobot import bobot, Rule
 import testcases
 
 mode = sys.argv[-1]
@@ -35,4 +35,5 @@ def test():
     return ''
 
 if __name__ == "__main__":
+    # Rule.all('jooo', 'ads', 'allahu akbar')
     app.run(port=8002, debug={mode is 'debug'})

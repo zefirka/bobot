@@ -5,6 +5,12 @@ from bobot.Parser import Parser
 
 parser = Parser()
 
+def gt(x):
+	return lambda y: y > x
+
+def lt(x):
+	return lambda y: y < x
+
 rules = [
 	Rule({
 		'match': ['alpha', 'betta'],
@@ -37,6 +43,15 @@ rules = [
 	Rule({
 		'match': re.compile(r'^regexp'),
 		'response': 'regexp included'
+	}),
+	Rule({
+		'parse': lambda text: text.isdigit() and int(text),
+		'match': Rule.all(lt(100), gt(50)),
+		'response': '{text} less than 100 and greater than 50'
+	}),
+	Rule({
+		'match': Rule.all(re.compile(r'^666'), re.compile(r'.*hell$')),
+		'response': 'DAMN HELL!!!'
 	})
 ]
 

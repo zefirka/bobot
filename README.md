@@ -41,3 +41,4 @@ bot.rule(rule)
 ## Documentation
 
 ### [Rules](https://github.com/zefirka/bobot/tree/master/docs/Rule.md)
+### [Responses](https://github.com/zefirka/bobot/tree/master/docs/Response.md)

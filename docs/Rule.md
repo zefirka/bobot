@@ -32,7 +32,6 @@ Every rule creating with given dict. That dict describes the rule. List of rule 
  - `parse`: parser instance for message body parsing
 
 ### Matching
-
 #### String
 
 If matcher is string then bobot checks that user message's text is **strictly equals** to the given text. 
@@ -47,7 +46,7 @@ This rule matches only for string `Hello`
 
 #### Regular expressions
 
-If type of matcher is compiled regular expression via `re.compile(pattern, flags) then bobot checks that user message's text matches to the given regular expression with **re.match** `bool(regexp.match(text))` method. 
+If type of matcher is compiled regular expression via `re.compile(pattern, flags)` then bobot checks that user message's text matches to the given regular expression with **re.match** `bool(regexp.match(text))` method. 
 
 ```python
 {
@@ -82,6 +81,18 @@ If type of `match` is list, then bobot checks all inner matchers of list and mat
 
 This rule matches all strings that `.isdigit()`, and more than `100` or string `'eclude'`.
 
+#### Rule.all
+
+There is a litlle helpre in Rule class called `.all` which can help create matcher that will be satisfied if **EVERY** given matcher will be satisfied.
+
+```python
+{
+	'match': Rule.all(re.compile(r'^666'), re.compile(r'.*hell$'))
+}
+```
+
+This rule will match to text that satisfied regular expressions `r'^666'` **AND** `r'.*hell$'`, as example `'666 damn hell'`
+
 #### Commands
 
 Bot has commands. If you want to rule matching to some command just use property `command` which means that rule matches to the given matcher OR to the `/command`. See:
@@ -96,6 +107,19 @@ Bot has commands. If you want to rule matching to some command just use property
 This rule matches to the regexp `r'^(H|h)ello'` and string `'/hi'`
 
 ### Responding
+
+Rules allows to describe how bot should response to user if user action matches to the rule.
+
+```python
+{
+	'match': lambda: True,
+	'response': 'Some random text'
+}
+```
+
+This syntax means that on every user message bot will answer with text: `'Some random text'`. If value of response is type of string then there will be automaticaly interpolated message data as: `response.format(text=text, username=username)`, where text - is original text message and username is sender's username (or first name if username is undefined). 
+
+You can describe more complex responses via [**Response** module](https://github.com/zefirka/bobot/tree/master/docs/Response.md). If value of `response` property in rule is dict or list then there will be created Response class instances based on that values.
 
 ### Actions
 #### Register

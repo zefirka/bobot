@@ -101,7 +101,6 @@ class Bot(object):
     def on(self, match, response, flags=0):
         "Subscribes to matching"
 
-        # Changelog
         if isinstance(response, dict) or isinstance(response, list):
             response = Response(response)
 

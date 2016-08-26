@@ -3,6 +3,9 @@
 
 ### 0.0.10
  - + Added regular expressins into rule matchings
+ - + Added `transform` in rules
+ - + Added `Rule.all` - for checking list of matches by **AND** operator
+ - * Changed simple response interpolation `name` -> `username`
 
 ### 0.0.9
  - + Added documentation for Rules
