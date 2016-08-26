@@ -3,8 +3,10 @@
 ### 0.0.9
  - + Added documentation for Rules
  - + Added test server (requires Flask)
+ - + Added creating **Response** object via **Rule** class instance
  - * Changed `action` in Rules. Now gets 3 arguments - bot instance, update and parsed body of update
  - * Changed `setWebhook` method. Now it is bot's method not method from `bobot` library
+ - * Moved `execRule` method to **Rule** class, not it is public method of Rules
  - * Fixed: behavior of bot when Rule has action but not response
 
 

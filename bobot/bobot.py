@@ -9,7 +9,6 @@ import re
 from bobot.Rule import Rule
 from bobot.Response import Response
 
-from bobot.utils import isFn, execValue
 from bobot.req import get
 
 __token = None

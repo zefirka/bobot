@@ -5,6 +5,8 @@ from bobot.utils import execValue, isFn
 from bobot.Response import Response
 
 def getMatcher(match):
+    "Return matcher by `match` value of Rule"
+
     def fn(text):
         "Mathing by function"
         return match(text)
@@ -41,11 +43,7 @@ class Rule(object):
 
         for key in d:
             if key in self.__alowedRules:
-                # if key in ['action', 'parse']:
-                #     fn = d[key]
-                #     setattr(self, key, lambda: d[key])
-                # else:
-                    setattr(self, key, d[key])
+                setattr(self, key, d[key])
             else:
                 raise RuleNameError('Rule property: "{}" is invalid'.format(key))
 
@@ -53,6 +51,13 @@ class Rule(object):
             self.addMatching('/' + self.command)
 
     def execRule(self, bot, update):
+        """
+            Executes rule
+
+            @public
+            @param {Bot} bot
+            @param {dict} update
+        """
         message = update.get('message', {})
         text = message.get('text')
         sender = message.get('from', {})
