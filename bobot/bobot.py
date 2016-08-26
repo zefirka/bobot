@@ -69,15 +69,16 @@ class Bot(object):
                 self.clients[senderId] = self.register(sender, rule.register)
 
             if hasattr(rule, 'action'):
-                rule.action(self, body)
+                rule.action(self, update, body)
 
-            if hasattr(rule, 'response') and isinstance(rule.response, Response):
-                return rule.response.run(update, self)
-            else:
-                response = execValue(rule.response, [body, self])
-                response = response.format(text=text, name=username)
+            if hasattr(rule, 'response'):
+                if isinstance(rule.response, Response):
+                    return rule.response.run(update, self)
+                else:
+                    response = execValue(rule.response, [body, self])
+                    response = response.format(text=text, name=username)
 
-                self.send(senderId, response)
+                    self.send(senderId, response)
 
     def __addRule(self, rule):
         if not isinstance(rule, Rule):
@@ -184,6 +185,23 @@ class Bot(object):
             result[key] = user.get(registerInfo[key])
         return result
 
+    def setWebhook(self, url, certificate=None):
+        """
+            Setting up Telegram Webhook for given bot
+            @public
+            @param {str} url
+            @param {str} [certificate]
+            @return {json}
+        """
+
+        data = {
+            'url': url
+        }
+        if certificate:
+            data['certificate'] = certificate
+
+        return call('setWebhook', data)
+
     def getToken(self):
         "Returns token"
 
@@ -203,13 +221,3 @@ def call(method, data={}):
     "Calls telegram API"
     url = __api.format(token=__token, method=method)
     return get(url, data)
-
-def setWebhook(url, certificate=None):
-    "Setting up Telegram Webhook"
-    data = {
-        'url': url
-    }
-    if certificate:
-        data['certificate'] = certificate
-
-    return call('setWebhook', data)

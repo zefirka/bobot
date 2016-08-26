@@ -4,25 +4,22 @@ Simple Telegram Bot API wrapper for Python
 
 ## Usage
 
-
 #### Initialize bot
 ```python
 import bobot
 
-# setup telegram api webhook
-bobot.setWebhook(webHookUrl)
-
-# Create bot and use it
+# Create instance of bot
 bot = bobot.init(TOKEN)
+
+# setup telegram api webhook
+bot.setWebhook(webHookUrl)
 ```
 
 #### Subscribe on messages
 
 ```python
 # by value of message text
-bot.on('hello', {
-	'sendMessage': 'hello' # set up action and response
-})
+bot.on('hello', 'hello yourself bro!') # set up request and response
 
 # create message handlers
 def sayHello(update):
@@ -41,5 +38,6 @@ rule = Rule({
 bot.rule(rule)
 ```
 
+## Documentation
 
-
+### [Rules](https://github.com/zefirka/bobot/tree/master/docs/Rule.md)

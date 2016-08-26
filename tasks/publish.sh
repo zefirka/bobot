@@ -6,6 +6,7 @@ make lint || ERRORS=1
 REPO=$1
 VERSION=$2
 PUSH=$3
+UPLOAD=$4
 
 if [ "$ERRORS" -eq 0 ]; then
 	python lib.py setup.py $VERSION update > setup_tmp.py
@@ -24,5 +25,7 @@ if [ "$ERRORS" -eq 0 ]; then
 		git push origin master --tags
 	fi
 
-	python setup.py sdist upload -r $REPO
+	if [ "$UPLOAD" = "true" ]; then
+		python setup.py sdist upload -r $REPO
+	fi
 fi

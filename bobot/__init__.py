@@ -3,7 +3,7 @@
 	https://github.com/zefirka/bobot
 """
 
-from .bobot import init, setWebhook
+from .bobot import init
 from .Rule import Rule
 from .Parser import Parser
 from .Response import Response
