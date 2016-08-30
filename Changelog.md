@@ -1,5 +1,13 @@
 # Changelog
 
+### 0.0.11
+ - + Added `sendPhoto` to bot's methods
+ - + Added `sendKeyboard` to Response descriptions
+ - + Added `sendPhoto` to Response descriptions
+ - + Improved Response sending formats with varargs as list of arguments
+ - + Improved error handling
+ - * Fixed `bot.keyboard` method
+ - * Fixed infrastructure errors
 
 ### 0.0.10
  - + Added regular expressins into rule matchings

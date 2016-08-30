@@ -3,13 +3,14 @@
     Includes class Bot
 """
 
-import json
 import re
+from json import loads, dumps
 
 from bobot.Rule import Rule
 from bobot.Response import Response
-
-from bobot.req import get
+from bobot.Errors import MessageTextEmptyError
+from bobot.utils.req import get, post
+from bobot.utils.utils import getFile
 
 __token = None
 __api = 'https://api.telegram.org/bot{token}/{method}'
@@ -42,35 +43,79 @@ class Bot(object):
             return self.__info
 
         info = call('getMe')
-        info = json.loads(info)
+        info = loads(info)
         self.__info = info
         return info.get('result')
 
-    def send(self, chatId, message):
+    def send(self, chatId, text, options={}):
         """
-            Sends message to user
+            Sends text to user
             @public
             @param {str} chatId
-            @param  {str} message
+            @param  {str} text
             @return {json}
         """
 
-        return call('sendMessage', {
-            'chat_id': chatId,
-            'text': message
-        })
+        if not text:
+            raise MessageTextEmptyError('Specify message\'s text')
 
-    def keyboard(self, chatId, text, keyboard):
-        "Sends keyboard to user"
+        data = {
+            'chat_id': chatId,
+            'text': text
+        }
+
+        data.update(options)
+
+        return call('sendMessage', data)
+
+
+    def sendPhoto(self, chatId, photo, caption=None):
+        """
+            Sends photo to user
+            @public
+            @param {str}        chatId
+            @param {str|file}   photo
+            @param {strp}       [caption]
+            @return {tuple}     <photos, result>
+        """
+
+        data = {
+            'chat_id': chatId,
+            'caption': caption
+        }
+
+        if isinstance(photo, str):
+            photo = getFile(photo)
+
+        file = {'photo': photo}
+
+        res = call('sendPhoto', data, file)
+        photos = res.get('result', {}).get('photos', [])
+
+        return photos, res
+
+    def keyboard(self, chatId, text, keyboard=None):
+        """
+            Sends keyboard to user
+            @public
+            @param {str} chatId
+            @param {str|dict} text - text or keyboard dict
+            @param {dict} [keyboard]
+        """
+
+        if not keyboard:
+            keyboard = text
+            text = text.pop('text', '')
+
+        if not text:
+            raise MessageTextEmptyError('Specify text message')
+
+        board = dumps(keyboard)
 
         return call('sendMessage', {
             'chat_id': chatId,
             'text': text,
-            'reply_markup': {
-                'keyboard': json.dumps(keyboard.get('keyboard')),
-                'resize_keyboard': keyboard.get('resize'),
-                'one_time_keyboard': keyboard.get('autohide')
-            }
+            'reply_markup': board
         })
 
     def process(self, update):
@@ -158,7 +203,11 @@ def init(token):
     bot = Bot()
     return bot
 
-def call(method, data={}):
+def call(method, data={}, files=None):
     "Calls telegram API"
     url = __api.format(token=__token, method=method)
+
+    if files:
+        return loads(post(url, data, None, files))
+
     return get(url, data)

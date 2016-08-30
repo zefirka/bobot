@@ -2,7 +2,7 @@
     User response module
 """
 
-from bobot.utils import flatten
+from bobot.utils.utils import flatten
 from bobot.Errors import RuleNameError, ResponseFormatError, ResponseMessageError
 
 def createMessage(message, data):
@@ -10,10 +10,12 @@ def createMessage(message, data):
         Creates message from message description object
         and update's data
     """
+    options = {}
     text = message
 
     if isinstance(message, dict):
         text = message.get('text')
+        options = message.get('options', {})
 
         if not text:
             raise ResponseMessageError('Message description should have "text" [String] property', 'text')
@@ -25,7 +27,7 @@ def createMessage(message, data):
                 username=data.get('username'),
                 second_name=data.get('second_name'))
 
-    return text
+    return text, options
 
 def processResponseBody(responseBody):
     "Processing response description body to actions lists"
@@ -42,7 +44,8 @@ def sendMessage(message=''):
 
     def action(bot, chatId, data):
         "Sends message"
-        return bot.send(chatId, createMessage(message, data))
+        text, options = createMessage(message, data)
+        return bot.send(chatId, text, options)
     return action
 
 def sendMessages(messages=['']):
@@ -51,7 +54,26 @@ def sendMessages(messages=['']):
     def action(bot, chatId, data):
         "Sends messages"
         for message in messages:
-            bot.send(chatId, createMessage(message, data))
+            text, options = createMessage(message, data)
+            bot.send(chatId, text, options)
+    return action
+
+def sendKeyboard(kb={}):
+    "Returns function that sends keyboard to user"
+    def action(bot, chatId, data):
+        # pylint: disable=unused-argument,missing-docstring
+        bot.keyboard(chatId, kb)
+    return action
+
+def sendPhoto(photo=None, caption=''):
+    "Returns function that sends photo to user"
+    if not photo:
+        raise ResponseFormatError('Specify photo by URL or File')
+
+    def action(bot, chatId, data):
+        # pylint: disable=unused-argument,missing-docstring
+        bot.sendPhoto(chatId, photo, caption)
+
     return action
 
 class Response():
@@ -59,11 +81,16 @@ class Response():
 
     __alowedRules = {
         'sendMessages': sendMessages,
-        'sendMessage': sendMessage
+        'sendMessage': sendMessage,
+        'sendKeyboard': sendKeyboard,
+        'sendPhoto': sendPhoto
     }
 
     def __addAction(self, actionName, actionArgs):
-        action = self.__alowedRules[actionName](actionArgs)
+        if isinstance(actionArgs, list):
+            action = self.__alowedRules[actionName](*actionArgs)
+        else:
+            action = self.__alowedRules[actionName](actionArgs)
         self.actions.append(action)
 
     def __processResponseDescription(self, response):

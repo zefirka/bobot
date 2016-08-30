@@ -1,17 +1,21 @@
 "Errors module"
 
 class RuleNameError(Exception):
-    "Exception to determine error in name of rule"
+    "Error in name of rule"
     pass
 
 class ParsingError(Exception):
-    "Exception to determine error while parsing of message"
+    "Error while parsing of message"
     pass
 
 class ResponseFormatError(Exception):
-    "Exception to determine error in response format"
+    "Error in response format"
     pass
 
 class ResponseMessageError(Exception):
-    "Exception to determine error in response message description"
+    "Error in response message description"
+    pass
+
+class MessageTextEmptyError(Exception):
+    "Exception for empty text in message"
     pass

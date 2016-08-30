@@ -3,7 +3,7 @@
 import re
 
 from bobot.Errors import RuleNameError
-from bobot.utils import execValue, isFn
+from bobot.utils.utils import execValue, isFn
 from bobot.Response import Response
 
 __retype = type(re.compile('re'))

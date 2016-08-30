@@ -35,5 +35,4 @@ def test():
     return ''
 
 if __name__ == "__main__":
-    # Rule.all('jooo', 'ads', 'allahu akbar')
     app.run(port=8002, debug={mode is 'debug'})

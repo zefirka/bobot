@@ -34,3 +34,13 @@ def flatten(lst):
     if isinstance(lst[0], list):
         return flatten(lst[0]) + flatten(lst[1:])
     return lst[:1] + flatten(lst[1:])
+
+def getFile(f):
+    """
+        Returns opened file
+
+        @public
+        @param {str} f
+        @return file
+    """
+    return open(f, 'rb')

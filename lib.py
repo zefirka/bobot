@@ -18,9 +18,12 @@ def getNextVersion(args):
 
   if release == 'minor':
     version[-2] = str(int(version[-2]) + 1)
+    version[-1] = '0'
 
   if release == 'major':
     version[-3] = str(int(version[-3]) + 1)
+    version[-2] = '0'
+    version[-1] = '0'
 
   return '.'.join(version)
 
@@ -50,11 +53,3 @@ APPDATA = {
 }
 
 print(call(APPDATA[argv[-1]], argv))
-
-
-
-
-
-
-
-
