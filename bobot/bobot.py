@@ -124,12 +124,15 @@ class Bot(object):
             @public
             @param {dict} update
         """
+        result = []
 
         if not len(self.rules):
             return None
 
         for rule in self.rules:
-            rule.execRule(self, update)
+            result.append(rule.execRule(self, update))
+
+        return list(filter(bool, result))
 
     def rule(self, rules):
         """
@@ -183,6 +186,7 @@ class Bot(object):
         data = {
             'url': url
         }
+
         if certificate:
             data['certificate'] = certificate
 

@@ -1,3 +1,5 @@
+"Module contains test cases for test server"
+
 import re
 
 from bobot.Rule import Rule
@@ -14,8 +16,11 @@ def lt(x):
     return lambda y: y < x
 
 def kb(bot, upd, body):
-    id = upd.get('message').get('from').get('id')
-    bot.keyboard(id, 'sosi', {
+    # pylint: disable=unused-argument
+    "Send keyboard"
+
+    userId = upd.get('message').get('from').get('id')
+    bot.keyboard(userId, 'sosi', {
         'resize_keyboard': True,
         'keyboard': [
             [

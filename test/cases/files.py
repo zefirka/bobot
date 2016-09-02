@@ -1,11 +1,16 @@
+"Test cases for files"
+
 from bobot.Rule import Rule
 
 def getFile(f):
+    "Opens file"
     return open(f, 'rb')
 
 def sendPhoto(bot, upd, body):
-    id = upd.get('message').get('from').get('id')
-    bot.sendPhoto(id, getFile('./test/files/image.png'))
+    # pylint: disable=unused-argument
+    "Sends photo to user"
+    userId = upd.get('message').get('from').get('id')
+    bot.sendPhoto(userId, getFile('./test/files/image.png'))
 
 rules = [
     Rule({

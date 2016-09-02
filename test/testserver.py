@@ -1,3 +1,4 @@
+# pylint: disable=wrong-import-position
 import sys
 import os
 
@@ -6,7 +7,7 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from flask import Flask, request
-from bobot import bobot, Rule
+from bobot import bobot
 import testcases
 
 mode = sys.argv[-1]
@@ -14,9 +15,9 @@ mode = sys.argv[-1]
 app = Flask('bot-test')
 
 dev_bot_token = '254968587:AAE1TDdb0f__jl_LDKkpCjtd2eE4UHsTn1Y'
+
 bot = bobot.init(dev_bot_token)
 bot.setWebhook(None)
-
 bot = testcases.assign(bot)
 
 @app.route('/')
@@ -25,7 +26,7 @@ def hello():
 
 @app.route('/about')
 def about():
-    res = str(bot.getUpdates())
+    res = str(bot.about())
     return res
 
 @app.route('/bot', methods=['GET', 'POST'])

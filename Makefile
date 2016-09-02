@@ -1,4 +1,5 @@
 PYLINTRC='./.pylintrc'
+TEST_PYLINTRC='./test/.pylintrc'
 VERSION=$(shell python lib.py version)
 
 # developer
@@ -31,6 +32,7 @@ NEXT='$(shell python lib.py $(SEMVER) next-version)'
 
 lint:
 	pylint --rcfile=$(PYLINTRC) bobot
+	pylint --rcfile=$(TEST_PYLINTRC) test
 
 publish-test:
 	echo 'Publishing into PYPITEST $(SEMVER) release with version: $(VERSION)'
@@ -60,6 +62,9 @@ commit-release:
 
 call:
 	./tasks/call.sh $(DEV_CALL_URL) $(DEV_CALL_ID) "$(CALL_TEXT)"
+
+tests:
+	./tasks/test.sh
 
 run-test-server:
 	python3.5 test/testserver.py debug

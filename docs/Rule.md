@@ -122,6 +122,34 @@ This syntax means that on every user message bot will answer with text: `'Some r
 You can describe more complex responses via [**Response** module](https://github.com/zefirka/bobot/tree/master/docs/Response.md). If value of `response` property in rule is dict or list then there will be created Response class instances based on that values.
 
 ### Actions
-#### Register
-#### Parsing
+
+Actions are just functions which get 3 arguments:
+```python
+def action(bot, update, body):
+	senderId = upd.get('message').get('from').get('id')
+	bot.send(senderId, str(body))
+```
+
+Where `bot` is bot's instance, `update` is a Telegram Update object, and `body` is a parsed message body
+
+#### Usage:
+
+```python
+def twice(bot, update, body):
+	senderId = upd.get('message').get('from').get('id')
+	bot.send(senderId, str(int(body) * 2))
+
+rule = Rule({
+	match: re.compile(r'^\d+$'),
+	action: twice
+})
+```
+
+```
+Bot <- '44'
+Bot -> '88'
+```
+
+#### Parsing and transformation
+TODO
 
