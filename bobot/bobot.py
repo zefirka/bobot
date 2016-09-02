@@ -68,6 +68,20 @@ class Bot(object):
 
         return call('sendMessage', data)
 
+    def sendSticker(self, chatId, stickerId):
+        """
+            Sends photo to user
+            @public
+            @param {str}        chatId
+            @param {str}        strickerId
+        """
+
+        data = {
+            'chat_id': chatId,
+            'sticker': stickerId
+        }
+
+        return call('sendSticker', data)
 
     def sendPhoto(self, chatId, photo, caption=None):
         """

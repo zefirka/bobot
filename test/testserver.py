@@ -29,6 +29,11 @@ def about():
     res = str(bot.about())
     return res
 
+@app.route('/updates')
+def updates():
+    res = str(bot.getUpdates())
+    return res
+
 @app.route('/bot', methods=['GET', 'POST'])
 def test():
     body = request.get_json()

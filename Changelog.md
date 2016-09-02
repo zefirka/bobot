@@ -1,5 +1,11 @@
 # Changelog
 
+
+### 0.0.12
+ - + Added tests
+ - + Added `sendSticker` Response and method for bot
+ - * Changed `sendMessages` format in Response
+
 ### 0.0.11
  - + Added `sendPhoto` to bot's methods
  - + Added `sendKeyboard` to Response descriptions

@@ -69,5 +69,4 @@ arrayText = Case.Case([
         ],
         'message': Case.Message('alpha').value()
     }
-
 ])

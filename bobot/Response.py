@@ -48,7 +48,7 @@ def sendMessage(message=''):
         return bot.send(chatId, text, options)
     return action
 
-def sendMessages(messages=['']):
+def sendMessages(*messages):
     "Returns messages sending function"
 
     def action(bot, chatId, data):
@@ -76,6 +76,15 @@ def sendPhoto(photo=None, caption=''):
 
     return action
 
+def sendSticker(stickerId):
+    "Returns stickerSender"
+
+    def action(bot, chatId, data):
+        # pylint: disable=unused-argument,missing-docstring
+        bot.sendSticker(chatId, stickerId)
+
+    return action
+
 class Response():
     "Response class"
 
@@ -83,6 +92,7 @@ class Response():
         'sendMessages': sendMessages,
         'sendMessage': sendMessage,
         'sendKeyboard': sendKeyboard,
+        'sendSticker': sendSticker,
         'sendPhoto': sendPhoto
     }
 

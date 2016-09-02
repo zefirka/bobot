@@ -106,6 +106,9 @@ def assign(bot):
             }
         }
     })
+    bot.on('jazz', {
+        'sendSticker': 'AAQCABNFpoQqAAT0Jx4o7oATy4kvAAIC'
+    })
     bot.rule(rules)
     bot.rule(filerules)
 
