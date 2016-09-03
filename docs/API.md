@@ -45,3 +45,10 @@ def index():
     bot.process(body)
     return ''
 ```
+
+#### getUpdates
+Calls telegram API method `getUpdates` which returns a list of updates. 
+
+```python
+bot.getUpdates()
+```

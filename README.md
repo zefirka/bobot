@@ -2,6 +2,10 @@
 
 Simple Telegram Bot API wrapper for Python 
 
+```
+$ pip install bobot
+```
+
 ## Usage
 
 #### Initialize bot

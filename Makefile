@@ -61,7 +61,7 @@ commit-release:
 	./tasks/publish.sh pypitest $(NEXT) $(PUSH) false
 
 call:
-	./tasks/call.sh x
+	./tasks/call.sh $(DEV_CALL_URL) $(DEV_CALL_ID) "$(CALL_TEXT)"
 
 tests:
 	./tasks/test.sh

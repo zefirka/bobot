@@ -8,15 +8,15 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from flask import Flask, request
 from bobot import bobot
+from constants import DEV_BOT_TOKEN
 import testcases
 
 mode = sys.argv[-1]
 
 app = Flask('bot-test')
 
-dev_bot_token = '254968587:AAE1TDdb0f__jl_LDKkpCjtd2eE4UHsTn1Y'
 
-bot = bobot.init(dev_bot_token)
+bot = bobot.init(DEV_BOT_TOKEN)
 bot.setWebhook(None)
 bot = testcases.assign(bot)
 

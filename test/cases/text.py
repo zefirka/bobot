@@ -44,7 +44,7 @@ regexText = Case.Case([
     }
 ])
 
-arrayText = Case.Case([
+arrayTextOr = Case.Case([
     Rule({
         'match': ['alpha', 'betta'],
         'response': 'alpha or betta'
@@ -69,4 +69,28 @@ arrayText = Case.Case([
         ],
         'message': Case.Message('alpha').value()
     }
+])
+
+arrayTextAnd = Case.Case([
+    Rule({
+        'match': Rule.all(re.compile(r'^a'), re.compile(r'.+b$')),
+        'response': 'starts from a, ends from b'
+    }),
+    Rule({
+        'match': Rule.all(re.compile(r'^a'), re.compile(r'.+c$')),
+        'response': 'starts from a, ends from c'
+    })
+], [
+    {
+        'expected': [],
+        'message': Case.Message('test').value()
+    },
+    {
+        'expected': [Case.Expectation('starts from a, ends from b').value()],
+        'message': Case.Message('amb').value()
+    },
+    {
+        'expected': [Case.Expectation('starts from a, ends from c').value()],
+        'message': Case.Message('amc').value()
+    },
 ])

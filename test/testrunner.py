@@ -9,17 +9,16 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from bobot import bobot
-from cases.text import simpleText, regexText, arrayText
-
-dev_bot_token = '254968587:AAE1TDdb0f__jl_LDKkpCjtd2eE4UHsTn1Y'
+from cases.text import simpleText, regexText, arrayTextOr, arrayTextAnd
+from constants import DEV_BOT_TOKEN
 
 def getBot(rules):
-    bot = bobot.init(dev_bot_token)
+    bot = bobot.init(DEV_BOT_TOKEN)
     bot.setWebhook(None)
     bot.rule(rules)
     return bot
 
-class MyTestCase(unittest.TestCase):
+class RuleTestCases(unittest.TestCase):
     def testSimpleText(self):
         bot = getBot(simpleText.rules)
         self.assertTrue(simpleText.check(bot))
@@ -28,8 +27,12 @@ class MyTestCase(unittest.TestCase):
         bot = getBot(regexText.rules)
         self.assertTrue(regexText.check(bot))
 
-    def testArray(self):
-        bot = getBot(arrayText.rules)
-        self.assertTrue(arrayText.check(bot))
+    def testArrayOr(self):
+        bot = getBot(arrayTextOr.rules)
+        self.assertTrue(arrayTextOr.check(bot))
+
+    def testArrayAnd(self):
+        bot = getBot(arrayTextAnd.rules)
+        self.assertTrue(arrayTextAnd.check(bot))
 
 unittest.main()

@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.0.13 (hot-fix)
+ - + Added docs for `getUpdates`
+ - * Fixed Makefile
+ - * Fixed tescases
 
 ### 0.0.12
  - + Added tests

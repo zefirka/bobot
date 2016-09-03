@@ -65,7 +65,6 @@ def coreMessage():
 id2 = lambda _, x: x
 dumps = lambda _, x: json.dumps(x)
 
-
 class Message:
     transform = id2
 
