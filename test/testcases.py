@@ -15,6 +15,8 @@ def gt(x):
 def lt(x):
     return lambda y: y < x
 
+actionTest = lambda bot, upd, body: bot.sendMessage(upd.get('message').get('from').get('id'), 'action completed bro')
+
 def kb(bot, upd, body):
     # pylint: disable=unused-argument
     "Send keyboard"
@@ -50,7 +52,7 @@ rules = [
     }),
     Rule({
         'match': 'action',
-        'action': lambda bot, upd, body: bot.send(upd.get('message').get('from').get('id'), 'action completed bro')
+        'action': actionTest
     }),
     Rule({
         'name': 'case',
@@ -92,6 +94,13 @@ rules = [
     Rule({
         'match': 'keyboard',
         'action': kb
+    }),
+    Rule({
+        'match': re.compile(r'where\s*am\s*i\??'),
+        'response': {
+            'sendLocation': [40.781984, 43.886827],
+            'sendMessage': 'Home, sweet home'
+        }
     })
 ]
 

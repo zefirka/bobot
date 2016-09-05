@@ -35,4 +35,14 @@ class RuleTestCases(unittest.TestCase):
         bot = getBot(arrayTextAnd.rules)
         self.assertTrue(arrayTextAnd.check(bot))
 
+class BotTestCases(unittest.TestCase):
+    def testToken(self):
+        bot = bobot.init('a')
+        self.assertEqual('a', bot.getToken())
+
+    def testDifferentInstances(self):
+        bot1 = bobot.init('a')
+        bot2 = bobot.init('b')
+        self.assertTrue(bot1.getToken() != bot2.getToken())
+
 unittest.main()

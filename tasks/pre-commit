@@ -1,0 +1,12 @@
+#!/bin/sh
+
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+make lint || ERRORS=1
+
+if [ "$CURRENT_BRANCH" == "master" ]; then
+    echo "Please do not commit to master"
+    ERRORS=1
+fi
+
+exit $ERRORS

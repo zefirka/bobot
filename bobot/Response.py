@@ -45,7 +45,7 @@ def sendMessage(message=''):
     def action(bot, chatId, data):
         "Sends message"
         text, options = createMessage(message, data)
-        return bot.send(chatId, text, options)
+        return bot.sendMessage(chatId, text, options)
     return action
 
 def sendMessages(*messages):
@@ -55,7 +55,7 @@ def sendMessages(*messages):
         "Sends messages"
         for message in messages:
             text, options = createMessage(message, data)
-            bot.send(chatId, text, options)
+            bot.sendMessage(chatId, text, options)
     return action
 
 def sendKeyboard(kb={}):
@@ -85,6 +85,15 @@ def sendSticker(stickerId):
 
     return action
 
+def sendLocation(*latlon):
+    "Returns location sender"
+
+    def action(bot, chatId, data):
+        # pylint: disable=unused-argument,missing-docstring
+        bot.sendLocation(chatId, *latlon)
+
+    return action
+
 class Response():
     "Response class"
 
@@ -93,7 +102,8 @@ class Response():
         'sendMessage': sendMessage,
         'sendKeyboard': sendKeyboard,
         'sendSticker': sendSticker,
-        'sendPhoto': sendPhoto
+        'sendPhoto': sendPhoto,
+        'sendLocation': sendLocation
     }
 
     def __addAction(self, actionName, actionArgs):

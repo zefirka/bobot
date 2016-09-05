@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.*
+
+### 0.1.0
+ - + Added `sendLocation`
+ - * Renamed `send` -> `sendMessage`
+ - * Fixed error with multiple instaces of bot sharing one token
+ - * Improved infrastructure
+
+
+## 0.0.*
+
 ### 0.0.13 (hot-fix)
  - + Added docs for `getUpdates`
  - * Fixed Makefile
