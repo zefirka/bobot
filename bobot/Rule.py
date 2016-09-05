@@ -116,7 +116,7 @@ class Rule(object):
                     response = execValue(self.response, [body, bot])
                     response = response.format(text=text, username=username, body=body)
 
-                    return bot.send(senderId, response)
+                    return bot.sendMessage(senderId, response)
 
     def on(self, text, action):
         "Create rule assigned on text"

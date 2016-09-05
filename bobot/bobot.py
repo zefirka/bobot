@@ -12,16 +12,64 @@ from bobot.Errors import MessageTextEmptyError
 from bobot.utils.req import get, post
 from bobot.utils.utils import getFile
 
-__token = None
 __api = 'https://api.telegram.org/bot{token}/{method}'
 
+def init(token):
+    'Initialize'
+
+    bot = Bot(token)
+    return bot
+
+def call(token, method, data={}, files=None):
+    "Calls telegram API"
+    url = __api.format(token=token, method=method)
+
+    if files:
+        return loads(post(url, data, None, files))
+
+    return get(url, data)
+
+def caller(method, **kwargs):
+    "Telegram API calling decorator"
+
+    method = kwargs.get('method', method)
+
+    def sendFunciton(token, *args):
+        "Calling function"
+        return call(token, method, *args)
+
+    def callerDecorator(dataFunction):
+        "Caller decorator"
+
+        def callerFunction(self, chatId, *args):
+            "API Caller"
+            argumentsOrder = kwargs.get('arguments')
+            requiredArguments = kwargs.get('required')
+
+            if argumentsOrder and requiredArguments:
+                for index, argument in enumerate(argumentsOrder):
+                    if requiredArguments.get(argument) and not args[index]:
+                        raise requiredArguments.get(argument)
+
+            if kwargs.get('static', False) is True:
+                callArgs = dataFunction(chatId, *args)
+            else:
+                callArgs = dataFunction(*args)
+
+            if kwargs.get('static', False) is not True:
+                callArgs[0]['chat_id'] = chatId
+
+            return sendFunciton(self.getToken(), *callArgs)
+
+        return callerFunction
+
+    return callerDecorator
+
 class Bot(object):
+    # pylint: disable=no-self-argument
     """
-        Main Bot class
+        Bot class
     """
-
-    __info = None
-
     def __addRule(self, rule):
         if not isinstance(rule, Rule):
             raise Exception('rule is not Rule instance')
@@ -32,7 +80,9 @@ class Bot(object):
     #####################################################
     #####################################################
 
-    def __init__(self):
+    def __init__(self, token):
+        self.__info = None
+        self.__token = token
         self.rules = []
         self.clients = {}
 
@@ -42,80 +92,65 @@ class Bot(object):
         if self.__info:
             return self.__info
 
-        info = call('getMe')
+        info = call(self.__token, 'getMe')
         info = loads(info)
         self.__info = info
         return info.get('result')
 
-    def send(self, chatId, text, options={}):
-        """
-            Sends text to user
-            @public
-            @param {str} chatId
-            @param  {str} text
-            @return {json}
-        """
-
-        if not text:
-            raise MessageTextEmptyError('Specify message\'s text')
+    @caller('sendMessage',
+            arguments=['text', 'options'],
+            required={
+                'text': MessageTextEmptyError('Specify message\'s text')
+            })
+    def sendMessage(text, options={}):
+        "Sends text to user"
 
         data = {
-            'chat_id': chatId,
             'text': text
         }
 
         data.update(options)
 
-        return call('sendMessage', data)
+        return [data]
 
-    def sendSticker(self, chatId, stickerId):
-        """
-            Sends photo to user
-            @public
-            @param {str}        chatId
-            @param {str}        strickerId
-        """
+    @caller('sendSticker', signature={
+        'stricker': 'stickerId'
+    })
+    def sendSticker(stickerId):
+        "Sends stricker to user"
 
         data = {
-            'chat_id': chatId,
             'sticker': stickerId
         }
 
-        return call('sendSticker', data)
+        return [data]
 
-    def sendPhoto(self, chatId, photo, caption=None):
-        """
-            Sends photo to user
-            @public
-            @param {str}        chatId
-            @param {str|file}   photo
-            @param {strp}       [caption]
-            @return {tuple}     <photos, result>
-        """
+    @caller('sendPhoto')
+    def sendPhoto(photo, caption=None):
+        "Sends photo to user"
 
-        data = {
-            'chat_id': chatId,
-            'caption': caption
-        }
+        data = {}
+        if caption:
+            data['caption'] = caption
 
         if isinstance(photo, str):
             photo = getFile(photo)
 
         file = {'photo': photo}
 
-        res = call('sendPhoto', data, file)
-        photos = res.get('result', {}).get('photos', [])
+        return data, file
 
-        return photos, res
+    @caller('sendLocation')
+    def sendLocation(lat, lon):
+        "sen"
+        return [{
+            'latitude': lat,
+            'longitude': lon
+        }]
 
-    def keyboard(self, chatId, text, keyboard=None):
-        """
-            Sends keyboard to user
-            @public
-            @param {str} chatId
-            @param {str|dict} text - text or keyboard dict
-            @param {dict} [keyboard]
-        """
+    @caller('sendMessage')
+    def keyboard(text, keyboard=None):
+        "Sends keyboard to user"
 
         if not keyboard:
             keyboard = text
@@ -126,11 +161,10 @@ class Bot(object):
 
         board = dumps(keyboard)
 
-        return call('sendMessage', {
-            'chat_id': chatId,
+        return [{
             'text': text,
             'reply_markup': board
-        })
+        }]
 
     def process(self, update):
         """
@@ -173,29 +207,25 @@ class Bot(object):
             'response': response
         }))
 
-    def getUpdates(self, limit=None, offset=None):
+    @caller('getUpdates', static=True)
+    def getUpdates(limit=None, offset=None):
         "Call getUpdates method"
-
-        return call('getUpdates', {
+        return [{
             'limit': limit,
             'offset': offset
-        })
+        }]
 
     def register(self, user, registerInfo={'id': 'id'}):
         "Registers client to bot memory"
+
         result = {}
         for key in registerInfo:
             result[key] = user.get(registerInfo[key])
         return result
 
-    def setWebhook(self, url, certificate=None):
-        """
-            Setting up Telegram Webhook for given bot
-            @public
-            @param {str} url
-            @param {str} [certificate]
-            @return {json}
-        """
+    @caller('setWebhook', static=True)
+    def setWebhook(url, certificate=None):
+        "Setting up Telegram Webhook for given bot"
 
         data = {
             'url': url
@@ -204,28 +234,9 @@ class Bot(object):
         if certificate:
             data['certificate'] = certificate
 
-        return call('setWebhook', data)
+        return [data]
 
     def getToken(self):
         "Returns token"
 
-        return __token
-
-
-def init(token):
-    'Initialize'
-
-    global __token
-    __token = token
-
-    bot = Bot()
-    return bot
-
-def call(method, data={}, files=None):
-    "Calls telegram API"
-    url = __api.format(token=__token, method=method)
-
-    if files:
-        return loads(post(url, data, None, files))
-
-    return get(url, data)
+        return self.__token
