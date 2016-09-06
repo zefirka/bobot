@@ -22,7 +22,7 @@ def kb(bot, upd, body):
     "Send keyboard"
 
     userId = upd.get('message').get('from').get('id')
-    bot.keyboard(userId, 'sosi', {
+    bot.sendKeyboard(userId, 'sosi', {
         'resize_keyboard': True,
         'keyboard': [
             [
@@ -59,17 +59,14 @@ rules = [
         'match': 'yo-yo',
         'response': [
             {
-                'sendMessage': {
+                'message': {
                     'text': 'Salam, {username}!',
                     'interpolate': True
                 }
             },
             {
-                'sendMessages': 'THIS IS SPARTA!!!'.split(' ')
-            },
-            {
-                'sendMessage': 'kase',
-                'sendKeyboard': testkb
+                'message': 'kase',
+                'keyboard': testkb
             }
         ]
     }),
@@ -101,22 +98,32 @@ rules = [
             'sendLocation': [40.781984, 43.886827],
             'sendMessage': 'Home, sweet home'
         }
+    }),
+    Rule({
+        'match': 'sielent',
+        'response': {
+            'sendMessage': {
+                'params': 'Hill',
+                'sielent': True
+            },
+            'sendLocation': {
+                'params': []
+            }
+        }
     })
 ]
 
 def assign(bot):
     bot.on('test', 'responses from on method as string')
     bot.on(r'^test?$', 'responses from on method as regexp')
-    bot.on('allahu akbar', {
-        'sendMessage': {
+    bot.on('html', {
+        'text': {
             'text': '<pre>И так я \nтоже могу\n:3</pre>',
-            'options': {
-                'parse_mode': 'html'
-            }
+            'format': 'html'
         }
     })
     bot.on('jazz', {
-        'sendSticker': 'AAQCABNFpoQqAAT0Jx4o7oATy4kvAAIC'
+        'sticker': 'AAQCABNFpoQqAAT0Jx4o7oATy4kvAAIC'
     })
     bot.rule(rules)
     bot.rule(filerules)

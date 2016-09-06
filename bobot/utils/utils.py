@@ -44,3 +44,15 @@ def getFile(f):
         @return file
     """
     return open(f, 'rb')
+
+def instanceof(obj, instances):
+    "Checks does object instance of some of given instances"
+    lst = filter(lambda instance: isinstance(obj, instance), instances)
+    return bool(len(list(lst)))
+
+def omit(obj, keys):
+    "Remove keys from object"
+    obj = obj.copy()
+    for key in keys:
+        del obj[key]
+    return obj

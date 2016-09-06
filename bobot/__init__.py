@@ -6,4 +6,4 @@
 from .bobot import init
 from .Rule import Rule
 from .Parser import Parser
-from .Response import Response
+from .Response import Response, Message, Text, Keyboard, Location, File, Photo, Contact

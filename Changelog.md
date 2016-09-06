@@ -4,7 +4,10 @@
 
 ### 0.1.0
  - + Added `sendLocation`
+ - + Added specific response classes
+ - * Changed one simple format of Response to multiple classes `Text, Location, Keyboard, Photo ...`
  - * Renamed `send` -> `sendMessage`
+ - * Renamed `keyboard` -> `sendKeyboard`
  - * Fixed error with multiple instaces of bot sharing one token
  - * Improved infrastructure
 

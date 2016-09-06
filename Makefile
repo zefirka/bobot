@@ -64,7 +64,7 @@ call:
 	./tasks/call.sh $(DEV_CALL_URL) $(DEV_CALL_ID) "$(CALL_TEXT)"
 
 tests:
-	./tasks/test.sh
+	python ./test/testrunner.py
 
 run-test-server:
 	python3.5 test/testserver.py debug
