@@ -58,7 +58,7 @@ def formatResponse(response, update, body):
     senderName = sender.get('first_name')
     senderSecondName = sender.get('second_name')
     username = sender.get('username')
-    date = sender.get('date')
+    date = message.get('date')
 
     return response.format(
         text=text,

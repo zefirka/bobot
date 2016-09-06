@@ -10,8 +10,8 @@
         Contact
 """
 
-from bobot.utils.utils import instanceof
-from bobot.Errors import ResponseFormatError
+from bobot.utils.utils import instanceof, omit, pickCompat
+from bobot.Errors import ResponseFormatError, ResponseMessageError
 
 class Message:
     "Main Message class container"
@@ -61,7 +61,8 @@ class Message:
 
         options = self.getOptions()
         options = {'options': options}
-        getattr(bot, self.method)(*sendArguments, **options)
+
+        return getattr(bot, self.method)(*sendArguments, **options)
 
 class Text(Message):
     "Text response container"
@@ -143,6 +144,8 @@ class Location(Message):
 class Sticker(Message):
     "Sticker response container"
     # pylint: disable=missing-docstring
+    method = 'sendSticker'
+
     def __init__(self, sticker, **options):
         super().__init__(**options)
         self.sticker = sticker
@@ -186,13 +189,13 @@ class Contact(Message):
 
 def getAction(actionType, data):
     "Calculates action by actionType in response description"
-    # pylint: disable=missing-docstring,unnecessary-lambda,redefined-variable-type
+    # pylint: disable=missing-docstring,unnecessary-lambda,redefined-variable-type,too-many-locals,too-many-branches
     response = None
 
     if actionType == 'text':
         if isinstance(data, dict):
             text = data.get('text', '')
-            del data['text']
+            data = omit(data, ['text'])
             response = Text(text, **data)
         else:
             text = data
@@ -201,13 +204,46 @@ def getAction(actionType, data):
         if isinstance(data, dict):
             lat = data.get('lat')
             lon = data.get('lon')
-            del data['lat']
-            del data['lon']
-            response = Location(lat, lon, **data)
+            options = omit(data, ['lat', 'lon'])
+            response = Location(lat, lon, **options)
         elif isinstance(data, list):
             response = Location(data[0], data[1])
         else:
-            raise ResponseFormatError('Invalid syntax at Location response')
+            raise ResponseFormatError('Invalid format at Location response')
+    elif actionType == 'keyboard':
+        if isinstance(data, dict):
+            optionNames = ['autohide', 'resize']
+            options = pickCompat(data, optionNames)
+            keyboard = omit(data, optionNames)
+            response = Keyboard(keyboard, **options)
+        else:
+            raise ResponseFormatError('Invalid format at Keyboard response')
+    elif actionType == 'photo':
+        if isinstance(data, dict):
+            photo = data.get('photo')
+            caption = data.get('caption')
+            options = omit(data, ['photo', 'caption'])
+            response = Photo(photo, caption, **options)
+        else:
+            response = Photo(data)
+    elif actionType == 'sticker':
+        if isinstance(data, dict):
+            sticker = data.get('sticker')
+            options = omit(data, ['sticker'])
+            response = Sticker(sticker, **options)
+        else:
+            response = Sticker(data)
+    elif actionType == 'contact':
+        if isinstance(data, dict):
+            phone = data.get('phone')
+            name = data.get('firstName')
+            lastName = data.get('lastName')
+            options = omit(data, ['phone', 'firstName', 'lastName'])
+            response = Contact(phone, name, lastName, **options)
+        else:
+            raise ResponseFormatError('Invalid format at Contact response')
+    else:
+        raise ResponseMessageError('Invalid response type: "{}"'.format(actionType))
 
     def action(response):
         return lambda bot, update: response.run(bot, update)
@@ -221,7 +257,8 @@ class Response():
         'text': Text,
         'keyboard': Keyboard,
         'location': Location,
-        'photo': Photo
+        'photo': Photo,
+        'sticker': Sticker
     }
 
     def __init__(self, responses):
@@ -236,18 +273,18 @@ class Response():
 
     def addAction(self, response):
         "Adds action to actions list"
-        for responseKey in response:
+        if len(response) > 1:
+            raise ResponseFormatError('Response can hold only one action')
 
-            respBody = response[responseKey]
+        responseKey = list(response.keys()).pop()
+        respBody = response[responseKey]
 
-            if responseKey in self.__map:
-                self.actions.append(getAction(responseKey, respBody))
-            else:
-                raise ResponseFormatError('Invalid response action: "{}"'.format(responseKey))
-
+        if responseKey in self.__map:
+            self.action = getAction(responseKey, respBody)
+        else:
+            raise ResponseFormatError('Invalid response action: "{}"'.format(responseKey))
 
     def run(self, bot, update):
         "Runs response actions"
+        return self.action(bot, update)
 
-        for action in self.actions:
-            action(bot, update)

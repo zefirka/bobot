@@ -56,3 +56,10 @@ def omit(obj, keys):
     for key in keys:
         del obj[key]
     return obj
+
+def pickCompat(obj, keys):
+    "Forming object from given and list of keys"
+    result = {}
+    for key in keys:
+        result[key] = obj.get(key)
+    return result

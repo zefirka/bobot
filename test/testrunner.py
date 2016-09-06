@@ -1,4 +1,4 @@
-# pylint: disable=wrong-import-position
+# pylint: skip-file
 
 import sys
 import os
@@ -10,6 +10,8 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from bobot import bobot
 from cases.text import simpleText, regexText, arrayTextOr, arrayTextAnd
+from cases.response.string import responseAsText, responseInterpolateText, responseInterpolateUserName, responseInterpolateDate
+from cases.response.text import responseAsTextDict, responseAsTextDictOptions, responseAsTextObject, responseAsTextObjectOptions
 from constants import DEV_BOT_TOKEN
 
 def getBot(rules):
@@ -34,6 +36,41 @@ class RuleTestCases(unittest.TestCase):
     def testArrayAnd(self):
         bot = getBot(arrayTextAnd.rules)
         self.assertTrue(arrayTextAnd.check(bot))
+
+class ResponseTestCases(unittest.TestCase):
+    def testResponseAsText(self):
+        bot = getBot(responseAsText.rules)
+        self.assertTrue(responseAsText.check(bot))
+
+    def testResponseInterpolateText(self):
+        bot = getBot(responseInterpolateText.rules)
+        self.assertTrue(responseInterpolateText.check(bot))
+
+    def testResponseInterpolateUserName(self):
+        bot = getBot(responseInterpolateUserName.rules)
+        self.assertTrue(responseInterpolateUserName.check(bot))
+
+    def testResponseInterpolateDate(self):
+        bot = getBot(responseInterpolateDate.rules)
+        self.assertTrue(responseInterpolateDate.check(bot))
+
+    def testResponseAsTextDict(self):
+        bot = getBot(responseAsTextDict.rules)
+        self.assertTrue(responseAsTextDict.check(bot))
+
+    def testResponseAsTextDictOptions(self):
+        bot = getBot(responseAsTextDictOptions.rules)
+        self.assertTrue(responseAsTextDictOptions.check(bot))
+
+    def testResponseAsTextObject(self):
+        bot = getBot(responseAsTextObject.rules)
+        self.assertTrue(responseAsTextObject.check(bot))
+
+    def testResponseAsTextObjectOptions(self):
+        bot = getBot(responseAsTextObjectOptions.rules)
+        self.assertTrue(responseAsTextObjectOptions.check(bot))
+        
+
 
 class BotTestCases(unittest.TestCase):
     def testToken(self):

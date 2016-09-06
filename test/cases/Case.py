@@ -12,6 +12,9 @@ class Case:
         for case in self.cases:
             expecteds, results = (case['expected'], bot.process(case['message']))
 
+            if len(results) != len(expecteds):
+                return False
+
             i = 0
             while i < len(results):
                 response = json.loads(results[i])
@@ -58,7 +61,8 @@ def coreMessage():
                 'first_name': 'dev',
                 'second_name': 'bot',
                 'username': 'devbot'
-            }
+            },
+            'date': None
         }
     }
 
@@ -68,10 +72,13 @@ dumps = lambda _, x: json.dumps(x)
 class Message:
     transform = id2
 
-    def __init__(self, text, core=coreMessage):
+    def __init__(self, text, core=coreMessage, **opts):
         core = core()
 
         core['message']['text'] = text
+
+        if opts.get('date'):
+            core['message']['date'] = opts.get('date')
         self.message = core
 
     def value(self):
@@ -82,7 +89,11 @@ class Message:
 class Expectation(Message):
     transform = dumps
 
-    def __init__(self, text, core=coreOk):
+    def __init__(self, text, core=coreOk, **opts):
         core = core()
         core['result']['text'] = text
+
+        if opts.get('date'):
+            core['result']['date'] = opts.get('date')
+
         self.message = core

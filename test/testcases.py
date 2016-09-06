@@ -59,13 +59,15 @@ rules = [
         'match': 'yo-yo',
         'response': [
             {
-                'message': {
+                'text': {
                     'text': 'Salam, {username}!',
                     'interpolate': True
                 }
             },
             {
-                'message': 'kase',
+                'text': 'kase',
+            },
+            {
                 'keyboard': testkb
             }
         ]
@@ -94,22 +96,11 @@ rules = [
     }),
     Rule({
         'match': re.compile(r'where\s*am\s*i\??'),
-        'response': {
-            'sendLocation': [40.781984, 43.886827],
-            'sendMessage': 'Home, sweet home'
-        }
-    }),
-    Rule({
-        'match': 'sielent',
-        'response': {
-            'sendMessage': {
-                'params': 'Hill',
-                'sielent': True
-            },
-            'sendLocation': {
-                'params': []
-            }
-        }
+        'response': [{
+            'location': [40.781984, 43.886827],
+        }, {
+            'text': 'Home, sweet home'
+        }]
     })
 ]
 
@@ -123,7 +114,7 @@ def assign(bot):
         }
     })
     bot.on('jazz', {
-        'sticker': 'AAQCABNFpoQqAAT0Jx4o7oATy4kvAAIC'
+        'sticker': 'BQADAgADBQADIyIEBsnMqhlT3UvLAg'
     })
     bot.rule(rules)
     bot.rule(filerules)
