@@ -1,3 +1,4 @@
+
 "Module containes Rule class"
 
 import re

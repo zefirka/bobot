@@ -51,14 +51,26 @@ def instanceof(obj, instances):
     return bool(len(list(lst)))
 
 def omit(obj, keys):
-    "Remove keys from object"
+    """
+        Remove keys from dict by names
+        @param {dict} obj
+        @param {list[str]} keys
+        @return {dict}
+
+    """
     obj = obj.copy()
     for key in keys:
-        del obj[key]
+        if obj.get(key):
+            del obj[key]
     return obj
 
 def pickCompat(obj, keys):
-    "Forming object from given and list of keys"
+    """
+        Forming dict from given one and list of keys
+        @param {dict} obj
+        @param {list[str]} keys
+        @return {dict}
+    """
     result = {}
     for key in keys:
         result[key] = obj.get(key)

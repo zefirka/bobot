@@ -6,11 +6,12 @@
  - + Added `sendLocation`
  - + Added specific response classes
  - * Changed one simple format of Response to multiple classes `Text, Location, Keyboard, Photo ...`
+ - * Changed format of **Response** descriptions
  - * Renamed `send` -> `sendMessage`
  - * Renamed `keyboard` -> `sendKeyboard`
  - * Fixed error with multiple instaces of bot sharing one token
  - * Improved infrastructure
-
+ - * Write more tests for rules and responses
 
 ## 0.0.*
 

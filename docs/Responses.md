@@ -18,10 +18,21 @@ bot.on('hi', Response({
 }))
 ```
 
+### Common settings
+ - `sielent` _(boolean)_ - should disable notifications when message will be revieved
+ - `replyId` _(string)_ - reply message id
+
 ### Text
+Response class to send simple text.
+
 ```python
 from bobot import Text
 
 resp = Text('text')
 ```
+
+#### Options
+ - `interpolate` _(boolean)_ - should use interpolation
+
 ### Keyboard
+ - `autohide` _(boolean)_ 

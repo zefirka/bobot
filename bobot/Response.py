@@ -32,8 +32,12 @@ class Message:
 
         options = self.options.get('options', {})
         options.update({
-            'disable_notifications': self.options.get('sielent', False)
+            'disable_notifications': self.options.get('sielent', False),
+            'reply_to_message_id': self.options.get('replyId', None),
         })
+
+        if self.options.get('markup'):
+            options.update({'reply_markup': self.options.get('markup', None)})
 
         return options
 
@@ -91,7 +95,6 @@ class Text(Message):
 
         additional = {
             'disable_web_page_preview': self.options.get('disableWebPreview', False),
-            'reply_to_message_id': self.options.get('replyId', None)
         }
 
         options.update(additional)
