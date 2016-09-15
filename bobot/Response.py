@@ -112,10 +112,24 @@ class Keyboard(Text):
     method = 'sendKeyboard'
     # pylint: disable=missing-docstring
 
+    @staticmethod
+    def __toKeyboard(row):
+        def toButton(btn):
+            if isinstance(btn, dict) and btn['text']:
+                return btn
+            else:
+                return {
+                    'text': str(btn)
+                }
+        return list(map(toButton, row))
+
     def __init__(self, text, keyboard=None, **options):
+        #pylint: disable=redefined-variable-type
         super().__init__(text, **options)
         self.text = text if keyboard else text.get('text')
         self.keyboard = keyboard if keyboard else text.get('keyboard', [])
+
+        self.keyboard = list(map(self.__toKeyboard, self.keyboard))
 
         if isinstance(self.keyboard, list):
             self.keyboard = {

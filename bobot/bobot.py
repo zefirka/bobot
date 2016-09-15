@@ -8,7 +8,7 @@ from json import loads, dumps
 
 from bobot.Rule import Rule
 from bobot.Response import Response
-from bobot.Errors import MessageTextEmptyError
+from bobot.Errors import MessageError
 from bobot.utils.req import get, post
 from bobot.utils.utils import getFile
 
@@ -106,7 +106,7 @@ class Bot(object):
     @caller('sendMessage',
             arguments=['text'],
             required={
-                'text': MessageTextEmptyError('Specify message\'s text')
+                'text': MessageError('Specify message\'s text')
             })
     def sendMessage(text):
         "Sends text to user"
@@ -117,7 +117,11 @@ class Bot(object):
 
         return data
 
-    @caller('sendSticker')
+    @caller('sendSticker',
+            arguments=['sticker'],
+            required={
+                'sticker': MessageError('Specify StickerID')
+            })
     def sendSticker(stickerId):
         "Sends stricker to user"
 
@@ -168,7 +172,7 @@ class Bot(object):
             text = text.pop('text', '')
 
         if not text:
-            raise MessageTextEmptyError('Specify text message')
+            raise MessageError('Specify text message')
 
         board = dumps(keyboard)
 

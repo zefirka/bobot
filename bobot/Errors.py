@@ -16,6 +16,7 @@ class ResponseMessageError(Exception):
     "Error in response message description"
     pass
 
-class MessageTextEmptyError(Exception):
-    "Exception for empty text in message"
+class MessageError(Exception):
+    "Exception for error in message content"
     pass
+        

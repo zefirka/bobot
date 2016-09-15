@@ -38,8 +38,8 @@ testkb = {
     'text': 'hallo bro',
     'keyboard': [
         [
-            {'text': 'alpha'},
-            {'text': 'betta'}
+            'alpha',
+            'betta'
         ]
     ],
     'one_time_keyboard': True

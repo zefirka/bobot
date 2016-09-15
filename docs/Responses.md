@@ -23,16 +23,64 @@ bot.on('hi', Response({
  - `replyId` _(string)_ - reply message id
 
 ### Text
-Response class to send simple text.
+Response class to send simple text. 
+
+Usage: `Text(<str:text>, [settings])`
 
 ```python
 from bobot import Text
 
-resp = Text('text')
+bot.on('text', Text('this is anwer'))
 ```
 
-#### Options
+##### Options
  - `interpolate` _(boolean)_ - should use interpolation
+ - `disableWebPreview` _(boolean)_ - should disable web page preview
+
+##### Response Instance
+
+```python
+text = Response({
+	'text': 'hello'
+})
+
+textOptions = Response({
+	'text': {
+		'text': 'text {username}',
+		'interpolate': True # this is part of option
+	}
+})
+```
 
 ### Keyboard
- - `autohide` _(boolean)_ 
+Response class to send 
+Usage: 
+ - `Keyboard(<string: text>, <list: keyboard>, [settings])`
+ - `Keyboard(<dict: description>, [settings])`
+
+```python
+
+times = Keyboard('Choose time', [['12:00', '18:00']], resize=True)
+
+days = Keyboard({
+	'text': 'Choose day',
+	'keyboard': [  ['Monday', 'Sunday']]
+}, autohide=True)
+```
+
+##### Options
+ - `autohide` _(boolean)_ - should hide keyboard after user's answer
+ - `resize` _(boolean)_ - should resize keyboard markup
+
+
+### Location
+
+Usage: `Location(<float:lat>, <float:lon>)`
+
+```python
+from bobot import Location
+
+lat = 43.3041
+lon = 40.2301
+bot.on('place', Location(lat, lon))
+```
