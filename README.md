@@ -1,4 +1,4 @@
-# bobot
+# bobot [![Build Status](https://travis-ci.org/zefirka/bobot.svg?branch=dev0.1.0)](https://travis-ci.org/zefirka/bobot)
 
 Simple Telegram Bot API wrapper for Python 
 
