@@ -4,6 +4,7 @@ import re
 
 from bobot.Rule import Rule
 from bobot.Parser import Parser
+from bobot.Response import Voice
 
 from cases.files import rules as filerules
 
@@ -118,5 +119,9 @@ def assign(bot):
     })
     bot.rule(rules)
     bot.rule(filerules)
+
+    voice = Voice('./test/files/voice.opus', 'caption', duration=3)
+
+    bot.on('voice', voice)
 
     return bot

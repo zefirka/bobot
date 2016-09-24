@@ -30,7 +30,7 @@ class Message:
     def getOptions(self):
         "Return options dict"
 
-        options = self.options.get('options', {})
+        options = self.options or {}
         options.update({
             'disable_notifications': self.options.get('sielent', False),
             'reply_to_message_id': self.options.get('replyId', None),
@@ -190,6 +190,18 @@ class Photo(File):
     "Photo response container"
     method = 'sendPhoto'
 
+class Document(File):
+    "Document response container"
+    method = 'sendDocument'
+
+class Voice(File):
+    "Voice response container"
+    method = 'sendVoice'
+
+class Audio(File):
+    "Audio response container"
+    method = 'sendAudio'
+
 class Contact(Message):
     "Contact response container"
     # pylint: disable=missing-docstring
@@ -259,6 +271,15 @@ def getAction(actionType, data):
             response = Contact(phone, name, lastName, **options)
         else:
             raise ResponseFormatError('Invalid format at Contact response')
+    elif actionType == 'voice' or actionType == 'audio':
+        if isinstance(data, dict):
+            file = data.get(actionType)
+            caption = data.get('caption')
+            options = omit(data, ['voice', 'caption', 'audio'])
+            response = Voice(file, caption, **options) if actionType == 'voice' else Audio(file, caption, **options)
+        else:
+            typeOfResponse = 'Voice' if actionType == 'voice' else 'Audio'
+            raise ResponseFormatError('Invalid format at {} response'.format(typeOfResponse))
     else:
         raise ResponseMessageError('Invalid response type: "{}"'.format(actionType))
 
@@ -275,7 +296,9 @@ class Response():
         'keyboard': Keyboard,
         'location': Location,
         'photo': Photo,
-        'sticker': Sticker
+        'sticker': Sticker,
+        'audio': Audio,
+        'voice': Voice
     }
 
     def __init__(self, responses):

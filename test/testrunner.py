@@ -70,8 +70,6 @@ class ResponseTestCases(unittest.TestCase):
         bot = getBot(responseAsTextObjectOptions.rules)
         self.assertTrue(responseAsTextObjectOptions.check(bot))
         
-
-
 class BotTestCases(unittest.TestCase):
     def testToken(self):
         bot = bobot.init('a')

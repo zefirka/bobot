@@ -137,7 +137,12 @@ class Rule(object):
         body = text
 
         if hasattr(self, 'parse'):
-            body = self.parse(body)
+            #pylint: disable=broad-except
+            try:
+                body = self.parse(body)
+            except Exception as error:
+                print('Parsing Error:')
+                print(error)
 
         matcher = getMatcher(self.match)
 

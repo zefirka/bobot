@@ -18,6 +18,22 @@ bot.on('hi', Response({
 }))
 ```
 
+#### As Response instaces
+
+All single Response class instances can be represented as common `Response` class instance declared with some dict. So:
+```python
+Text('Hello', interpolate=true)
+
+#equals to
+
+Response({
+	'text': {
+		'text': 'Hello',
+		'interpolate': True
+	}
+})
+```
+
 ### Common settings
  - `sielent` _(boolean)_ - should disable notifications when message will be revieved
  - `replyId` _(string)_ - reply message id
@@ -84,3 +100,6 @@ lat = 43.3041
 lon = 40.2301
 bot.on('place', Location(lat, lon))
 ```
+### Voice
+### Audio
+

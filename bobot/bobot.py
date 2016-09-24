@@ -25,7 +25,8 @@ def call(token, method, data={}, files=None):
     url = __api.format(token=token, method=method)
 
     if files:
-        return loads(post(url, data, None, files))
+        response = loads(post(url, data, None, files))
+        return response
 
     return get(url, data)
 
@@ -146,9 +147,55 @@ class Bot(object):
 
         return data, file
 
+    @caller('sendDocument')
+    def sendDocument(doc, caption=None):
+        "Sends document"
+
+        data = {}
+        if caption:
+            data['caption'] = caption
+
+        if isinstance(doc, str):
+            doc = getFile(doc)
+
+        file = {'document': doc}
+
+        return data, file
+
+    @caller('sendAudio')
+    def sendAudio(audio, caption=None):
+        "Sends audio"
+
+        data = {}
+        if caption:
+            data['caption'] = caption
+
+        if isinstance(audio, str):
+            audio = getFile(audio)
+
+        file = {'audio': audio}
+
+        return data, file
+
+    @caller('sendVoice')
+    def sendVoice(voice, caption=None):
+        "Sends voice"
+
+        data = {}
+        if caption:
+            data['caption'] = caption
+
+        if isinstance(voice, str):
+            voice = getFile(voice)
+
+        file = {'voice': voice}
+
+        return data, file
+
     @caller('sendLocation')
     def sendLocation(lat, lon):
-        "sen"
+        "Sends location"
+
         return {
             'latitude': lat,
             'longitude': lon
