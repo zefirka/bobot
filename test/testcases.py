@@ -105,7 +105,17 @@ rules = [
     })
 ]
 
+def wordsCount(message):
+    return len(message.split(' '))
+
+
 def assign(bot):
+    bot.rule(Rule({
+        'match': lambda length: length > 2,
+        'parse': wordsCount,
+        'response': 'Words count was: {body}'
+    }))
+
     bot.on('test', 'responses from on method as string')
     bot.on(r'^test?$', 'responses from on method as regexp')
     bot.on('html', {

@@ -10,8 +10,11 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from bobot import bobot
 from cases.text import simpleText, regexText, arrayTextOr, arrayTextAnd
-from cases.response.string import responseAsText, responseInterpolateText, responseInterpolateUserName, responseInterpolateDate
-from cases.response.text import responseAsTextDict, responseAsTextDictOptions, responseAsTextObject, responseAsTextObjectOptions
+
+from cases.response.string import *
+from cases.response.text import *
+from cases.response.photo import *
+
 from constants import DEV_BOT_TOKEN
 
 def getBot(rules):
@@ -37,7 +40,7 @@ class RuleTestCases(unittest.TestCase):
         bot = getBot(arrayTextAnd.rules)
         self.assertTrue(arrayTextAnd.check(bot))
 
-class ResponseTestCases(unittest.TestCase):
+class TextResponseTestCases(unittest.TestCase):
     def testResponseAsText(self):
         bot = getBot(responseAsText.rules)
         self.assertTrue(responseAsText.check(bot))
@@ -69,7 +72,37 @@ class ResponseTestCases(unittest.TestCase):
     def testResponseAsTextObjectOptions(self):
         bot = getBot(responseAsTextObjectOptions.rules)
         self.assertTrue(responseAsTextObjectOptions.check(bot))
-        
+
+    def testResponseInterpolateBody(self):
+        bot = getBot(responseInterpolateBody.rules)
+        self.assertTrue(responseInterpolateBody.check(bot))
+  
+class PhotoResponseTestCases(unittest.TestCase):
+    def testResponsePhotoWithoutCaption(self):
+        bot = getBot(responsePhotoWithoutCaption.rules)
+        self.assertTrue(responsePhotoWithoutCaption.check(bot))
+
+    def testResponsePhotoWithCaption(self):
+        bot = getBot(responsePhotoWithCaption.rules)
+        self.assertTrue(responsePhotoWithCaption.check(bot))
+
+    def testResponsePhotoErrorFileNotFound(self):
+        bot = getBot(responsePhotoErrorFileNotFound.rules)
+        self.assertTrue(responsePhotoErrorFileNotFound.handlerError(bot, FileNotFoundError))
+
+    def testResponsePhotoWithoutCaptionAsPhoto(self):
+        bot = getBot(responsePhotoWithoutCaptionAsPhoto.rules)
+        self.assertTrue(responsePhotoWithoutCaptionAsPhoto.check(bot))
+
+    def testResponsePhotoWithCaptionAsPhoto(self):
+        bot = getBot(responsePhotoWithCaptionAsPhoto.rules)
+        self.assertTrue(responsePhotoWithCaptionAsPhoto.check(bot))
+
+    def testResponsePhotoErrorFileNotFoundAsPhoto(self):
+        bot = getBot(responsePhotoErrorFileNotFoundAsPhoto.rules)
+        self.assertTrue(responsePhotoErrorFileNotFoundAsPhoto.handlerError(bot, FileNotFoundError))
+    
+
 class BotTestCases(unittest.TestCase):
     def testToken(self):
         bot = bobot.init('a')

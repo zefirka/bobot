@@ -39,3 +39,11 @@ responseInterpolateDate = Case.Case([Rule({
     'message': Case.Message('i', date='666_666').value()
 }])
 
+responseInterpolateBody = Case.Case([Rule({
+    'match': 'i',
+    'response': 'interpolate text: {body}'
+})], [{
+    'expected': [Case.Expectation('interpolate text: i').value()],
+    'message': Case.Message('i').value()
+}])
+

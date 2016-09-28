@@ -32,7 +32,7 @@ class Message:
 
         options = self.options or {}
         options.update({
-            'disable_notifications': self.options.get('sielent', False),
+            'disable_notification': self.options.get('sielent', False),
             'reply_to_message_id': self.options.get('replyId', None),
         })
 
@@ -92,6 +92,7 @@ class Text(Message):
 
     def getOptions(self):
         options = super().getOptions()
+        print('options: {}'.format(options))
 
         additional = {
             'disable_web_page_preview': self.options.get('disableWebPreview', False),

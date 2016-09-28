@@ -19,4 +19,5 @@ class ResponseMessageError(Exception):
 class MessageError(Exception):
     "Exception for error in message content"
     pass
+
         

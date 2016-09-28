@@ -1,7 +1,30 @@
 import json
+import os
 
 BOT_ID = 254968587
 DEV_ID = 172862922
+
+__results = {
+    'message_id': 'id',
+    'date': 'date',
+    'caption': 'caption'
+}
+
+def clearPhoto(_id):
+    def clearFn(photo):
+        photo.update({
+            'file_id': _id
+        })
+        return photo
+    return clearFn
+
+def clear(response, **opts):
+    for opt in __results:
+        response['result'][opt] = opts.get(__results[opt], None)
+
+    if response['result'].get('photo'):
+        response['result']['photo'] = list(map(clearPhoto(opts.get('photoId')), response['result']['photo']))
+    return response
 
 class Case:
     def __init__(self, rules, cases):
@@ -10,27 +33,47 @@ class Case:
 
     def check(self, bot):
         for case in self.cases:
-            expecteds, results = (case['expected'], bot.process(case['message']))
+
+            msg = case['message'][0]
+            expecteds, results = (case['expected'], bot.process(msg))
 
             if len(results) != len(expecteds):
                 return False
 
             i = 0
             while i < len(results):
-                response = json.loads(results[i])
-                expected = json.loads(expecteds[i])
+                resultItem = results[i]
+                response = resultItem if isinstance(resultItem, dict) else json.loads(resultItem)
+                expectedItem = expecteds[i]
+
+                expectedValue = expectedItem[0]
+                expectedOptions = expectedItem[1]
+
+                expected = expectedValue
 
                 i += 1
 
                 if response['result'] and expected['result']:
-                    response['result']['message_id'] = None
-                    expected['result']['message_id'] = None
-                    response['result']['date'] = None
-                    expected['result']['date'] = None
+                    response = clear(response, **expectedOptions)
+                    expected = clear(expected, **expectedOptions)
 
+                    if os.environ.get('DEBUG') == 'true':
+                        print('response ------->')
+                        print(response)
+                        print('expected ------->')
+                        print(expected)
                     if not response == expected:
                         return False
         return True
+
+    def handlerError(self, bot, errorClass):
+        #pylint: disable=broad-except
+        try:
+            self.check(bot)
+        except Exception as err:
+            if isinstance(err, errorClass):
+                return True
+            return False
 
 def coreOk():
     return {
@@ -53,6 +96,32 @@ def coreOk():
         }
     }
 
+def coreOkPhoto(pid):
+    core = coreOk()
+    core['result'].update({
+        'photo': [
+            {
+                'height': 84,
+                'file_size': 2139,
+                'width': 90,
+                'file_id': pid
+            },
+            {
+                'height': 298,
+                'file_size': 21120,
+                'width': 320,
+                'file_id': pid
+            },
+            {
+                'height': 416,
+                'file_size': 35367,
+                'width': 446,
+                'file_id': pid
+            }
+        ]
+    })
+    return core
+
 def coreMessage():
     return {
         'message': {
@@ -69,6 +138,7 @@ def coreMessage():
 id2 = lambda _, x: x
 dumps = lambda _, x: json.dumps(x)
 
+
 class Message:
     transform = id2
 
@@ -79,15 +149,20 @@ class Message:
 
         if opts.get('date'):
             core['message']['date'] = opts.get('date')
+
+        if opts.get('muted'):
+            core['message']['disable_notification'] = True
+
+        self.options = opts
         self.message = core
 
     def value(self):
         # pylint: disable=no-value-for-parameter
-        return self.transform(self.message)
+        return self.transform(self.message), self.options
 
 
 class Expectation(Message):
-    transform = dumps
+    transform = id2
 
     def __init__(self, text, core=coreOk, **opts):
         core = core()
@@ -96,4 +171,22 @@ class Expectation(Message):
         if opts.get('date'):
             core['result']['date'] = opts.get('date')
 
+        if opts.get('muted'):
+            core['result']['disable_notification'] = opts.get('muted')
+
+        self.options = opts
         self.message = core
+
+class Photo(Expectation):
+    def __init__(self, _id, core=coreOkPhoto, **opts):
+        core = core(_id)
+
+        if opts.get('date'):
+            core['result']['date'] = opts.get('date')
+
+        if opts.get('muted'):
+            core['result']['disable_notification'] = opts.get('muted')
+
+        self.options = opts
+        self.message = core
+

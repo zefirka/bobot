@@ -100,6 +100,32 @@ lat = 43.3041
 lon = 40.2301
 bot.on('place', Location(lat, lon))
 ```
+
+### Photo
+
+Usage: 
+	- `Photo(<string:fileAddress>, [string:caption])`
+	- `Photo(<binary:file>, [string:caption])`
+
+```python
+from bobot import Photo
+
+bot.on('photo', Photo('./files/image.png', 'This is my caption'))
+```
+##### Response Instance
+
+```python
+photo = Response({
+	'photo': {
+		'photo': './files/image.png',
+		'caption': 'This is my caption'
+	}
+})
+```
+
 ### Voice
+
 ### Audio
+
+### Document
 

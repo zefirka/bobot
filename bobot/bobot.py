@@ -26,9 +26,10 @@ def call(token, method, data={}, files=None):
 
     if files:
         response = loads(post(url, data, None, files))
-        return response
+    else:
+        response = get(url, data)
 
-    return get(url, data)
+    return response
 
 def caller(method, **kwargs):
     "Telegram API calling decorator"
