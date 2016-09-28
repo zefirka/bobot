@@ -1,4 +1,4 @@
-# bobot
+# bobot [![Build Status](https://travis-ci.org/zefirka/bobot.svg?branch=dev0.1.0)](https://travis-ci.org/zefirka/bobot)
 
 Simple Telegram Bot API wrapper for Python 
 
@@ -44,5 +44,6 @@ bot.rule(rule)
 
 ## Documentation
 
+### [Bot API](https://github.com/zefirka/bobot/tree/master/docs/API.md)
 ### [Rules](https://github.com/zefirka/bobot/tree/master/docs/Rule.md)
-### [Responses](https://github.com/zefirka/bobot/tree/master/docs/Response.md)
+### [Responses](https://github.com/zefirka/bobot/tree/master/docs/Responses.md)

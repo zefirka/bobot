@@ -20,7 +20,7 @@ if [ "$ERRORS" -eq 0 ]; then
 
 	if [ "$REPO" = "pypitest" ] || [ "$PUSH" = "true" ]; then
 		git add .
-		git commit -m "Release Version: $VERSION"
+		git commit -n -m "Release Version: $VERSION"
 		git tag -a "v$VERSION" -m "Version: $VERSION"
 		git push origin master --tags
 	fi

@@ -8,7 +8,7 @@ from json import loads, dumps
 
 from bobot.Rule import Rule
 from bobot.Response import Response
-from bobot.Errors import MessageTextEmptyError
+from bobot.Errors import MessageError
 from bobot.utils.req import get, post
 from bobot.utils.utils import getFile
 
@@ -25,9 +25,11 @@ def call(token, method, data={}, files=None):
     url = __api.format(token=token, method=method)
 
     if files:
-        return loads(post(url, data, None, files))
+        response = loads(post(url, data, None, files))
+    else:
+        response = get(url, data)
 
-    return get(url, data)
+    return response
 
 def caller(method, **kwargs):
     "Telegram API calling decorator"
@@ -41,7 +43,7 @@ def caller(method, **kwargs):
     def callerDecorator(dataFunction):
         "Caller decorator"
 
-        def callerFunction(self, chatId, *args):
+        def callerFunction(self, chatId, *args, **options):
             "API Caller"
             argumentsOrder = kwargs.get('arguments')
             requiredArguments = kwargs.get('required')
@@ -56,8 +58,14 @@ def caller(method, **kwargs):
             else:
                 callArgs = dataFunction(*args)
 
+            if isinstance(callArgs, dict):
+                callArgs = [callArgs]
+
             if kwargs.get('static', False) is not True:
                 callArgs[0]['chat_id'] = chatId
+
+            if options.get('options', False):
+                callArgs[0].update(options.get('options'))
 
             return sendFunciton(self.getToken(), *callArgs)
 
@@ -98,24 +106,24 @@ class Bot(object):
         return info.get('result')
 
     @caller('sendMessage',
-            arguments=['text', 'options'],
+            arguments=['text'],
             required={
-                'text': MessageTextEmptyError('Specify message\'s text')
+                'text': MessageError('Specify message\'s text')
             })
-    def sendMessage(text, options={}):
+    def sendMessage(text):
         "Sends text to user"
 
         data = {
             'text': text
         }
 
-        data.update(options)
+        return data
 
-        return [data]
-
-    @caller('sendSticker', signature={
-        'stricker': 'stickerId'
-    })
+    @caller('sendSticker',
+            arguments=['sticker'],
+            required={
+                'sticker': MessageError('Specify StickerID')
+            })
     def sendSticker(stickerId):
         "Sends stricker to user"
 
@@ -123,7 +131,7 @@ class Bot(object):
             'sticker': stickerId
         }
 
-        return [data]
+        return data
 
     @caller('sendPhoto')
     def sendPhoto(photo, caption=None):
@@ -140,16 +148,86 @@ class Bot(object):
 
         return data, file
 
+    @caller('sendDocument')
+    def sendDocument(doc, caption=None):
+        "Sends document"
+
+        data = {}
+        if caption:
+            data['caption'] = caption
+
+        if isinstance(doc, str):
+            doc = getFile(doc)
+
+        file = {'document': doc}
+
+        return data, file
+
+    @caller('sendAudio')
+    def sendAudio(audio, caption=None):
+        "Sends audio"
+
+        data = {}
+        if caption:
+            data['caption'] = caption
+
+        if isinstance(audio, str):
+            audio = getFile(audio)
+
+        file = {'audio': audio}
+
+        return data, file
+
+    @caller('sendVoice')
+    def sendVoice(voice, caption=None):
+        "Sends voice"
+
+        data = {}
+        if caption:
+            data['caption'] = caption
+
+        if isinstance(voice, str):
+            voice = getFile(voice)
+
+        file = {'voice': voice}
+
+        return data, file
+
+    @caller('sendVideo')
+    def sendVideo(video, caption=None):
+        "Sends video"
+
+        data = {}
+        if caption:
+            data['caption'] = caption
+
+        if isinstance(video, str):
+            video = getFile(video)
+
+        file = {'video': video}
+
+        return data, file
+
     @caller('sendLocation')
     def sendLocation(lat, lon):
-        "sen"
-        return [{
+        "Sends location"
+
+        return {
             'latitude': lat,
             'longitude': lon
-        }]
+        }
+
+    @caller('sendContact')
+    def sendContact(phone, name, secondName=None):
+        "Send contact to user"
+        return {
+            'phone_number': phone,
+            'first_name': name,
+            'secon_name': secondName
+        }
 
     @caller('sendMessage')
-    def keyboard(text, keyboard=None):
+    def sendKeyboard(text, keyboard=None):
         "Sends keyboard to user"
 
         if not keyboard:
@@ -157,14 +235,14 @@ class Bot(object):
             text = text.pop('text', '')
 
         if not text:
-            raise MessageTextEmptyError('Specify text message')
+            raise MessageError('Specify text message')
 
         board = dumps(keyboard)
 
-        return [{
+        return {
             'text': text,
             'reply_markup': board
-        }]
+        }
 
     def process(self, update):
         """
@@ -210,10 +288,10 @@ class Bot(object):
     @caller('getUpdates', static=True)
     def getUpdates(limit=None, offset=None):
         "Call getUpdates method"
-        return [{
+        return {
             'limit': limit,
             'offset': offset
-        }]
+        }
 
     def register(self, user, registerInfo={'id': 'id'}):
         "Registers client to bot memory"
@@ -234,7 +312,7 @@ class Bot(object):
         if certificate:
             data['certificate'] = certificate
 
-        return [data]
+        return data
 
     def getToken(self):
         "Returns token"

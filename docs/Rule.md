@@ -151,5 +151,18 @@ Bot -> '88'
 ```
 
 #### Parsing and transformation
-TODO
 
+You can parse message from user via `parse` key. 
+
+```python
+def wordsCount(message):
+    return len(message.split(' '))
+
+Rule({
+    'match': lambda length: length > 2,
+    'parse': wordsCount,
+    'response': 'Words count was: {body} (original text is: {text})'
+})
+```
+
+**Note!** Mathcing is performed by _body_ not _text_.

@@ -12,7 +12,6 @@ bot = bobot.init(TOKEN)
 print(bot.about())
 ```
 
-
 ## Methods
 
 #### setWebhook

@@ -4,6 +4,7 @@ import re
 
 from bobot.Rule import Rule
 from bobot.Parser import Parser
+from bobot.Response import Voice, Video
 
 from cases.files import rules as filerules
 
@@ -22,7 +23,7 @@ def kb(bot, upd, body):
     "Send keyboard"
 
     userId = upd.get('message').get('from').get('id')
-    bot.keyboard(userId, 'sosi', {
+    bot.sendKeyboard(userId, 'sosi', {
         'resize_keyboard': True,
         'keyboard': [
             [
@@ -38,8 +39,8 @@ testkb = {
     'text': 'hallo bro',
     'keyboard': [
         [
-            {'text': 'alpha'},
-            {'text': 'betta'}
+            'alpha',
+            'betta'
         ]
     ],
     'one_time_keyboard': True
@@ -59,17 +60,16 @@ rules = [
         'match': 'yo-yo',
         'response': [
             {
-                'sendMessage': {
+                'text': {
                     'text': 'Salam, {username}!',
                     'interpolate': True
                 }
             },
             {
-                'sendMessages': 'THIS IS SPARTA!!!'.split(' ')
+                'text': 'kase',
             },
             {
-                'sendMessage': 'kase',
-                'sendKeyboard': testkb
+                'keyboard': testkb
             }
         ]
     }),
@@ -97,28 +97,43 @@ rules = [
     }),
     Rule({
         'match': re.compile(r'where\s*am\s*i\??'),
-        'response': {
-            'sendLocation': [40.781984, 43.886827],
-            'sendMessage': 'Home, sweet home'
-        }
+        'response': [{
+            'location': [40.781984, 43.886827],
+        }, {
+            'text': 'Home, sweet home'
+        }]
     })
 ]
 
+def wordsCount(message):
+    return len(message.split(' '))
+
+
 def assign(bot):
+    bot.rule(Rule({
+        'match': lambda length: length > 2,
+        'parse': wordsCount,
+        'response': 'Words count was: {body}'
+    }))
+
+    bot.on('video', Video('./test/files/video.mp4', 'sosi'))
+
     bot.on('test', 'responses from on method as string')
     bot.on(r'^test?$', 'responses from on method as regexp')
-    bot.on('allahu akbar', {
-        'sendMessage': {
+    bot.on('html', {
+        'text': {
             'text': '<pre>И так я \nтоже могу\n:3</pre>',
-            'options': {
-                'parse_mode': 'html'
-            }
+            'format': 'html'
         }
     })
     bot.on('jazz', {
-        'sendSticker': 'AAQCABNFpoQqAAT0Jx4o7oATy4kvAAIC'
+        'sticker': 'BQADAgADBQADIyIEBsnMqhlT3UvLAg'
     })
     bot.rule(rules)
     bot.rule(filerules)
+
+    voice = Voice('./test/files/voice.opus', 'caption', duration=3)
+
+    bot.on('voice', voice)
 
     return bot

@@ -1,10 +1,15 @@
+
 "Module containes Rule class"
 
 import re
 
 from bobot.Errors import RuleNameError
-from bobot.utils.utils import execValue, isFn
-from bobot.Response import Response
+from bobot.utils.utils import execValue, isFn, instanceof
+from bobot.Response import Response, Message
+
+def isResponseClass(i):
+    "Checks is item is response class"
+    return instanceof(i, [Response, Message])
 
 __retype = type(re.compile('re'))
 
@@ -44,6 +49,47 @@ def getMatcher(match):
     if isinstance(match, __retype):
         return rematch
 
+
+def formatResponse(response, update, body):
+    "Formats given response with update's data"
+
+    message = update.get('message', {})
+    text = message.get('text')
+    sender = message.get('from', {})
+    senderName = sender.get('first_name')
+    senderSecondName = sender.get('second_name')
+    username = sender.get('username')
+    date = message.get('date')
+
+    return response.format(
+        text=text,
+        username=username,
+        body=body,
+        name=senderName,
+        secondName=senderSecondName,
+        date=date
+    )
+
+def getResponder(response, bot, update, body):
+    "Calculates responder for given response by type"
+
+    if isinstance(response, dict):
+        response = Response(response)
+
+    if isResponseClass(response):
+        return response.run(bot, update)
+
+    if isinstance(response, list):
+        result = []
+        for res in response:
+            result.append(getResponder(res, bot, update, body))
+        return result
+
+    response = execValue(response, [body, bot])
+    response = formatResponse(response, update, body)
+
+    userId = update.get('message', {}).get('from', {}).get('id')
+    return bot.sendMessage(userId, response)
 
 class Rule(object):
     "Rules class"
@@ -87,12 +133,16 @@ class Rule(object):
         text = message.get('text')
         sender = message.get('from', {})
         senderId = sender.get('id')
-        username = sender.get('username', sender.get('first_name'))
 
         body = text
 
         if hasattr(self, 'parse'):
-            body = self.parse(body)
+            #pylint: disable=broad-except
+            try:
+                body = self.parse(body)
+            except Exception as error:
+                print('Parsing Error:')
+                print(error)
 
         matcher = getMatcher(self.match)
 
@@ -107,16 +157,7 @@ class Rule(object):
                 self.action(bot, update, body)
 
             if hasattr(self, 'response'):
-                if isinstance(self.response, Response):
-                    return self.response.run(update, bot)
-                elif isinstance(self.response, dict) or isinstance(self.response, list):
-                    response = Response(self.response)
-                    return response.run(update, bot)
-                else:
-                    response = execValue(self.response, [body, bot])
-                    response = response.format(text=text, username=username, body=body)
-
-                    return bot.sendMessage(senderId, response)
+                return getResponder(self.response, bot, update, body)
 
     def on(self, text, action):
         "Create rule assigned on text"

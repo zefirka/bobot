@@ -8,6 +8,12 @@ DEFAULT_CALL_URL="http://127.0.0.1:$(DEFAULT_TEST_PORT)/bot"
 DEFAULT_CALL_ID="172862922"
 DEFAULT_CALL_TEXT="test"
 
+PYVERSION=$(shell which python3.5 || echo python)
+
+ifneq ('$(PYVERSION)','python')
+	PYVERSION='python3.5'
+endif
+
 ifeq ('$(DEV_CALL_ID)','')
 	DEV_CALL_ID=$(DEFAULT_CALL_ID)
 endif
@@ -64,7 +70,7 @@ call:
 	./tasks/call.sh $(DEV_CALL_URL) $(DEV_CALL_ID) "$(CALL_TEXT)"
 
 tests:
-	./tasks/test.sh
+	$(PYVERSION) ./test/testrunner.py
 
 run-test-server:
 	python3.5 test/testserver.py debug
