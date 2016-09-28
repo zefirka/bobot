@@ -46,12 +46,13 @@ def update(args):
     return content
 
 APPDATA = {
-  'version': '0.0.13',
+  'version': '0.1.0',
   'next-version': getNextVersion,
   'trace': trace,
   'update': update
 }
 
 print(call(APPDATA[argv[-1]], argv))
+
 
 
