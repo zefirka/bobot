@@ -3,7 +3,17 @@
 ## 0.1.*
 
 ### 0.1.0
- - + Added support for Locations, Contacts, Files, Venues, Documents, Voice, Audio
+ - + Added support for next types: 
+  - Locations
+  - Contacts
+  - Venues
+  - Documents
+  - Voice
+  - Audio
+  - Photo
+  - Video
+  - Sticker
+
  - + Added specific response classes
  - * Changed one simple format of Response to multiple classes `Text, Location, Keyboard, Photo ...`
  - * Changed format of **Response** descriptions

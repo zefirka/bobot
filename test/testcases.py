@@ -4,7 +4,7 @@ import re
 
 from bobot.Rule import Rule
 from bobot.Parser import Parser
-from bobot.Response import Voice
+from bobot.Response import Voice, Video
 
 from cases.files import rules as filerules
 
@@ -115,6 +115,8 @@ def assign(bot):
         'parse': wordsCount,
         'response': 'Words count was: {body}'
     }))
+
+    bot.on('video', Video('./test/files/video.mp4', 'sosi'))
 
     bot.on('test', 'responses from on method as string')
     bot.on(r'^test?$', 'responses from on method as regexp')

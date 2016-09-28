@@ -203,6 +203,10 @@ class Audio(File):
     "Audio response container"
     method = 'sendAudio'
 
+class Video(File):
+    "Video response container"
+    method = 'sendVideo'
+
 class Contact(Message):
     "Contact response container"
     # pylint: disable=missing-docstring
@@ -281,6 +285,14 @@ def getAction(actionType, data):
         else:
             typeOfResponse = 'Voice' if actionType == 'voice' else 'Audio'
             raise ResponseFormatError('Invalid format at {} response'.format(typeOfResponse))
+    elif actionType == 'video':
+        if isinstance(data, dict):
+            file = data.get('video')
+            caption = data.get('caption')
+            options = omit(data, ['caption', 'video'])
+            response = Video(file, caption, **options)
+        else:
+            raise ResponseFormatError('Invalid format at Video response')
     else:
         raise ResponseMessageError('Invalid response type: "{}"'.format(actionType))
 

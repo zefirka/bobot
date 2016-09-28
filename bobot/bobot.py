@@ -193,6 +193,21 @@ class Bot(object):
 
         return data, file
 
+    @caller('sendVideo')
+    def sendVideo(video, caption=None):
+        "Sends video"
+
+        data = {}
+        if caption:
+            data['caption'] = caption
+
+        if isinstance(video, str):
+            video = getFile(video)
+
+        file = {'video': video}
+
+        return data, file
+
     @caller('sendLocation')
     def sendLocation(lat, lon):
         "Sends location"

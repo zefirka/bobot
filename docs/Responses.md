@@ -125,7 +125,22 @@ photo = Response({
 
 ### Voice
 
-### Audio
+Usage: 
+	- `Voice(<string:fileAddress>, [string:caption])`
+	- `Voice(<binary:file>, [string:caption])`
 
-### Document
+```python
+from bobot import Photo
 
+bot.on('voice', Voice('./files/voice.ogg', 'This is my voice'))
+```
+##### Response Instance
+
+```python
+voice = Response({
+	'voice': {
+		'voice': './files/image.png',
+		'caption': 'This is my caption'
+	}
+})
+```
