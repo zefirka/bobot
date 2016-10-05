@@ -43,7 +43,7 @@ def caller(method, **kwargs):
     def callerDecorator(dataFunction):
         "Caller decorator"
 
-        def callerFunction(self, chatId, *args, **options):
+        def callerFunction(self, chatId=None, *args, **options):
             "API Caller"
             argumentsOrder = kwargs.get('arguments')
             requiredArguments = kwargs.get('required')
