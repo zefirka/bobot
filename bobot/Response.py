@@ -340,4 +340,3 @@ class Response():
     def run(self, bot, update):
         "Runs response actions"
         return self.action(bot, update)
-
