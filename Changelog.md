@@ -2,6 +2,9 @@
 
 ## 0.1.*
 
+### 0.1.1
+ - *Fixed `getUpdates` signature
+
 ### 0.1.0
  - + Added support for next types: 
   - Locations
