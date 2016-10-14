@@ -2,6 +2,10 @@
 
 ## 0.1.*
 
+### 0.1.2
+ - + added `sendChatAction` method
+ - * fixed README
+
 ### 0.1.1
  - *Fixed `getUpdates` signature
 

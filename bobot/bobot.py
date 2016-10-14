@@ -301,6 +301,15 @@ class Bot(object):
             result[key] = user.get(registerInfo[key])
         return result
 
+
+    @caller('sendChatAction')
+    def sendChatAction(action):
+        "Send chatAction object"
+
+        return {
+            'action': action
+        }
+
     @caller('setWebhook', static=True)
     def setWebhook(url, certificate=None):
         "Setting up Telegram Webhook for given bot"
