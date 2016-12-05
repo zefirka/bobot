@@ -53,15 +53,16 @@ class Case:
 
                 i += 1
 
+                if os.environ.get('DEBUG') == 'true':
+                    print(response)
+                    print('response ------->')
+                    print(expected)
+                    print('expected ------->')
+
                 if response['result'] and expected['result']:
                     response = clear(response, **expectedOptions)
                     expected = clear(expected, **expectedOptions)
 
-                    if os.environ.get('DEBUG') == 'true':
-                        print('response ------->')
-                        print(response)
-                        print('expected ------->')
-                        print(expected)
                     if not response == expected:
                         return False
         return True

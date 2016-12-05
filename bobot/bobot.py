@@ -9,8 +9,8 @@ from json import loads, dumps
 from bobot.Rule import Rule
 from bobot.Response import Response
 from bobot.Errors import MessageError
-from bobot.utils.req import get, post
-from bobot.utils.utils import getFile
+from bobot.req import get, post
+from bobot.utils import getFile
 
 __api = 'https://api.telegram.org/bot{token}/{method}'
 
