@@ -2,6 +2,8 @@
 
 Documentation for **Response** class.
 
+Response classes are special classes provided by **bobot** to make response creation simple. You can create abstract object of response for some message and use it in your code. Also there is a common class called **Response** which provide API to create any type of response by describing options of that response.
+
 ## Usage
 
 Reponses are special classes to describe response actions. There are some specific classes to response with a given type of message like a simple text, keyboard, sticker or photo and common `Response` class which allows to you describe response as you want.
@@ -34,19 +36,26 @@ Response({
 })
 ```
 
-### Common settings
+##
+ Common settings
  - `sielent` _(boolean)_ - should disable notifications when message will be revieved
  - `replyId` _(string)_ - reply message id
 
-### Text
+## Text
 Response class to send simple text. 
 
-Usage: `Text(<str:text>, [settings])`
+Usage:
+	
+	- Text(<str:text>, [settings])
+
+Example:
 
 ```python
 from bobot import Text
 
 bot.on('text', Text('this is anwer'))
+
+# when bot get message 'text' it answers with text message 'this is answer'
 ```
 
 ##### Options
@@ -68,11 +77,15 @@ textOptions = Response({
 })
 ```
 
-### Keyboard
-Response class to send 
+## Keyboard
+Response class to send keyboards.
+
 Usage: 
- - `Keyboard(<string: text>, <list: keyboard>, [settings])`
- - `Keyboard(<dict: description>, [settings])`
+
+	- Keyboard(<string: text>, <list: keyboard>, [settings])
+	- Keyboard(<dict: description>, [settings])
+
+Example:
 
 ```python
 
@@ -88,10 +101,25 @@ days = Keyboard({
  - `autohide` _(boolean)_ - should hide keyboard after user's answer
  - `resize` _(boolean)_ - should resize keyboard markup
 
+##### Response Instance
 
-### Location
+```python
+keyboard = Response({
+	'keyboard': {
+		'keyboard': [ ['Red pill',  'Blue pill'] ],
+		'text': 'Choose'
+	}
+})
+```
 
-Usage: `Location(<float:lat>, <float:lon>)`
+## Location
+Class to send location with latitute and lontitude.
+
+Usage: 
+
+	- Location(<float:lat>, <float:lon>)
+
+Example: 
 
 ```python
 from bobot import Location
@@ -101,11 +129,43 @@ lon = 40.2301
 bot.on('place', Location(lat, lon))
 ```
 
-### Photo
+## Document
+Common class to send file to user.
 
 Usage: 
-	- `Photo(<string:fileAddress>, [string:caption])`
-	- `Photo(<binary:file>, [string:caption])`
+
+	- Document(<string:fileAddress>, [string:caption])
+	- Document(<binary:file>, [string:caption])
+
+Example: 
+
+```python
+from bobot import Docuemnt
+
+bot.on('give me text', Docuemnt('./docs/file.txt', 'Get this text'))
+
+```
+
+##### Response Instance
+
+```python
+doc = Response({
+	'document': {
+		'document': './docs/file.txt',
+		'caption': 'Get this text'
+	}
+})
+```
+
+## Photo
+Class to send photo.
+
+Usage:
+
+	- Photo(<string:fileAddress>, [string:caption])
+	- Photo(<binary:file>, [string:caption])
+
+Example:
 
 ```python
 from bobot import Photo
@@ -123,11 +183,15 @@ photo = Response({
 })
 ```
 
-### Voice
+## Voice
+Class to send voice message to user.
 
 Usage: 
-	- `Voice(<string:fileAddress>, [string:caption])`
-	- `Voice(<binary:file>, [string:caption])`
+
+	- Voice(<string:fileAddress>, [string:caption])
+	- Voice(<binary:file>, [string:caption])
+
+Example:
 
 ```python
 from bobot import Photo
@@ -144,3 +208,43 @@ voice = Response({
 	}
 })
 ```
+
+#### Options for voice
+ - `duration` _(int)_ - duration of the voice message in seconds
+
+## Video
+Class to send to user video file.
+
+Usage:
+
+    - Video(<string:fileAddress>, [string:caption])
+	- Video(<binary:file>, [string:caption])
+
+Example: 
+
+```python
+from bobot import Video
+
+myVideo = Video('./videos/video.mp4', 'This is a caption for my video', duration=10, sielent=True)
+
+bot.on('video', myVideo)
+```
+
+##### Response Instance
+
+```python
+voice = Response({
+	'video': {
+		'video': './videos/video.mp4',
+		'caption': 'This is my caption'
+	}
+})
+```
+
+
+#### Options for video
+ - `duration` _(int)_ - duration of the video message in seconds
+ - `width` _(int)_ - video width
+ - `height` _(int)_ - video height
+
+

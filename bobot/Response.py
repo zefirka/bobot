@@ -10,7 +10,7 @@
         Contact
 """
 
-from bobot.utils.utils import instanceof, omit, pickCompat
+from bobot.utils import instanceof, omit, pickCompat
 from bobot.Errors import ResponseFormatError, ResponseMessageError
 
 class Message:

@@ -4,7 +4,7 @@
 import re
 
 from bobot.Errors import RuleNameError
-from bobot.utils.utils import execValue, isFn, instanceof
+from bobot.utils import execValue, isFn, instanceof
 from bobot.Response import Response, Message
 
 def isResponseClass(i):
