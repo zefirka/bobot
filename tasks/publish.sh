@@ -11,12 +11,16 @@ UPLOAD=$4
 if [ "$ERRORS" -eq 0 ]; then
 	python lib.py setup.py $VERSION update > setup_tmp.py
 	python lib.py lib.py $VERSION update > lib_tmp.py
+	python lib.py README.md $VERSION update > README_tmp.md
 
 	rm lib.py
 	mv lib_tmp.py lib.py
 
 	rm setup.py
 	mv setup_tmp.py setup.py
+
+	rm README.md
+	mv README_tmp.md README.md
 
 	if [ "$REPO" = "pypitest" ] || [ "$PUSH" = "true" ]; then
 		git add .
