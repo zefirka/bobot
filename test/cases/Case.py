@@ -53,13 +53,13 @@ class Case:
 
                 i += 1
 
-                if os.environ.get('DEBUG') == 'true':
+                if os.environ.get('DEBUG') == 'True':
                     print(response)
                     print('response ------->')
                     print(expected)
                     print('expected ------->')
 
-                if response['result'] and expected['result']:
+                if response.get('result') and expected.get('result'):
                     response = clear(response, **expectedOptions)
                     expected = clear(expected, **expectedOptions)
 
@@ -131,6 +131,10 @@ def coreMessage():
                 'first_name': 'dev',
                 'second_name': 'bot',
                 'username': 'devbot'
+            },
+            'chat': {
+                'id': '{}'.format(DEV_ID),
+                'type': 'private'
             },
             'date': None
         }

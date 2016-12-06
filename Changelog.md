@@ -2,6 +2,10 @@
 
 ## 0.1.*
 
+### 0.1.3
+ - * Fixed missing Sticker class in exports
+ - * Fixed response ID by adding `direct` parameter
+
 ### 0.1.2
  - + added `sendChatAction` method
  - * fixed README
