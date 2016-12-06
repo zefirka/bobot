@@ -1,4 +1,5 @@
 import json
+import os
 
 BOT_ID = 254968587
 DEV_ID = 172862922
@@ -52,10 +53,11 @@ class Case:
 
                 i += 1
 
-                print(response)
-                print('response ------->')
-                print(expected)
-                print('expected ------->')
+                if os.environ.get('DEBUG') == 'True':
+                    print(response)
+                    print('response ------->')
+                    print(expected)
+                    print('expected ------->')
 
                 if response.get('result') and expected.get('result'):
                     response = clear(response, **expectedOptions)
@@ -129,6 +131,10 @@ def coreMessage():
                 'first_name': 'dev',
                 'second_name': 'bot',
                 'username': 'devbot'
+            },
+            'chat': {
+                'id': '{}'.format(DEV_ID),
+                'type': 'private'
             },
             'date': None
         }
