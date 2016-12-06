@@ -1,5 +1,4 @@
 import json
-import os
 
 BOT_ID = 254968587
 DEV_ID = 172862922
@@ -53,13 +52,12 @@ class Case:
 
                 i += 1
 
-                if os.environ.get('DEBUG') == 'true':
-                    print(response)
-                    print('response ------->')
-                    print(expected)
-                    print('expected ------->')
+                print(response)
+                print('response ------->')
+                print(expected)
+                print('expected ------->')
 
-                if response['result'] and expected['result']:
+                if response.get('result') and expected.get('result'):
                     response = clear(response, **expectedOptions)
                     expected = clear(expected, **expectedOptions)
 
