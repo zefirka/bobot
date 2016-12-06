@@ -54,3 +54,4 @@ APPDATA = {
 
 print(call(APPDATA[argv[-1]], argv))
 
+

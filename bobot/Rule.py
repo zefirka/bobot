@@ -94,7 +94,7 @@ def getResponder(response, bot, update, body):
 class Rule(object):
     "Rules class"
 
-    __alowedRules = ['name', 'match', 'response', 'command', 'action', 'parse', 'transform']
+    __alowedRules = ['name', 'match', 'response', 'command', 'action', 'parse', 'transform', 'after']
 
     @staticmethod
     def all(*args):
@@ -157,7 +157,12 @@ class Rule(object):
                 self.action(bot, update, body)
 
             if hasattr(self, 'response'):
-                return getResponder(self.response, bot, update, body)
+                responseResult = getResponder(self.response, bot, update, body)
+
+                if hasattr(self, 'after'):
+                    self.after(responseResult, bot, update)
+
+                return responseResult
 
     def on(self, text, action):
         "Create rule assigned on text"
