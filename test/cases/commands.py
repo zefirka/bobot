@@ -45,10 +45,6 @@ commandStandaloneWithSlash = Case.Case([
 ], [
     {
         'expected': [Case.Expectation('done text').value()],
-        'message': Case.Message('text').value()
-    },
-    {
-        'expected': [Case.Expectation('done text').value()],
         'message': Case.Message('/text').value()
     }
 ])
@@ -59,10 +55,6 @@ commandStandaloneWithSlashAndUserName = Case.Case([
         'response': 'done text'
     })
 ], [
-    {
-        'expected': [Case.Expectation('done text').value()],
-        'message': Case.Message('text').value()
-    },
     {
         'expected': [Case.Expectation('done text').value()],
         'message': Case.Message('/text@TestBot').value()
