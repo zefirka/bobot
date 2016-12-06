@@ -21,6 +21,10 @@ def execValue(val, args=None):
     """
     return val(*args) if isFn(val) else val
 
+def some(pred, lst):
+    #pylint: disable=missing-docstring
+    return bool(len(list(filter(pred, lst))))
+
 def flatten(lst):
     """
         Flattens list recursively
@@ -75,3 +79,11 @@ def pickCompat(obj, keys):
     for key in keys:
         result[key] = obj.get(key)
     return result
+
+def someOf(*preds):
+    "Return predicate returns true if SOME OF GIVEN PREDICATS return true"
+
+    def predicate(arg):
+        #pylint: disable=missing-docstring
+        return some(lambda pred: pred(arg), filter(bool, preds))
+    return predicate

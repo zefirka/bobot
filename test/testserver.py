@@ -15,8 +15,7 @@ mode = sys.argv[-1]
 
 app = Flask('bot-test')
 
-
-bot = bobot.init(DEV_BOT_TOKEN)
+bot = bobot.init(DEV_BOT_TOKEN, 'TestBot')
 bot.setWebhook(None)
 bot = testcases.assign(bot)
 

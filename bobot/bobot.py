@@ -14,10 +14,10 @@ from bobot.utils import getFile
 
 __api = 'https://api.telegram.org/bot{token}/{method}'
 
-def init(token):
+def init(token, name=None):
     'Initialize'
 
-    bot = Bot(token)
+    bot = Bot(token, name)
     return bot
 
 def call(token, method, data={}, files=None):
@@ -88,11 +88,12 @@ class Bot(object):
     #####################################################
     #####################################################
 
-    def __init__(self, token):
+    def __init__(self, token, name=None):
         self.__info = None
         self.__token = token
         self.rules = []
         self.clients = {}
+        self.name = name
 
     def about(self):
         "Returns information about bot"

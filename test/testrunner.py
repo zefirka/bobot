@@ -14,11 +14,13 @@ from cases.text import simpleText, regexText, arrayTextOr, arrayTextAnd
 from cases.response.string import *
 from cases.response.text import *
 from cases.response.photo import *
+from cases.after import afterTests, testResultOkCalls
+from cases.commands import *
 
 from constants import DEV_BOT_TOKEN
 
 def getBot(rules):
-    bot = bobot.init(DEV_BOT_TOKEN)
+    bot = bobot.init(DEV_BOT_TOKEN, 'TestBot')
     bot.setWebhook(None)
     bot.rule(rules)
     return bot
@@ -39,6 +41,36 @@ class RuleTestCases(unittest.TestCase):
     def testArrayAnd(self):
         bot = getBot(arrayTextAnd.rules)
         self.assertTrue(arrayTextAnd.check(bot))
+
+class RuleAfterTestCases(unittest.TestCase):
+    def testAfterCalls(self):
+        bot = getBot(afterTests.rules)
+        afterTests.checkAfter(bot)
+        self.assertNotEqual(afterTests.before, afterTests.after)
+        self.assertEqual(afterTests.awaits, afterTests.after)
+
+    def testResultOkCalls(self):
+        bot = getBot(testResultOkCalls.rules)
+        testResultOkCalls.checkAfter(bot)
+        self.assertNotEqual(testResultOkCalls.before, testResultOkCalls.after)
+        self.assertEqual(testResultOkCalls.awaits, testResultOkCalls.after)
+
+class RuleCommandTestCases(unittest.TestCase):
+    def testCommandWithSlash(self):
+        bot = getBot(commandWithSlash.rules)
+        self.assertTrue(commandWithSlash.check(bot))
+    
+    def testCommandWithSlashAndUserName(self):
+        bot = getBot(commandWithSlashAndUserName.rules)
+        self.assertTrue(commandWithSlashAndUserName.check(bot))
+    
+    def testCommandStandaloneWithSlash(self):
+        bot = getBot(commandStandaloneWithSlash.rules)
+        self.assertTrue(commandStandaloneWithSlash.check(bot))
+    
+    def testCommandStandaloneWithSlashAndUserName(self):
+        bot = getBot(commandStandaloneWithSlashAndUserName.rules)
+        self.assertTrue(commandStandaloneWithSlashAndUserName.check(bot))
 
 class TextResponseTestCases(unittest.TestCase):
     def testResponseAsText(self):
@@ -101,7 +133,6 @@ class PhotoResponseTestCases(unittest.TestCase):
     def testResponsePhotoErrorFileNotFoundAsPhoto(self):
         bot = getBot(responsePhotoErrorFileNotFoundAsPhoto.rules)
         self.assertTrue(responsePhotoErrorFileNotFoundAsPhoto.handlerError(bot, FileNotFoundError))
-    
 
 class BotTestCases(unittest.TestCase):
     def testToken(self):

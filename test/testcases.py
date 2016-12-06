@@ -132,6 +132,11 @@ def assign(bot):
     bot.rule(rules)
     bot.rule(filerules)
 
+    bot.rule(Rule({
+        'command': 'command',
+        'response': 'Commands do work'
+    }))
+
     voice = Voice('./test/files/voice.opus', 'caption', duration=3)
 
     bot.on('voice', voice)

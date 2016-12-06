@@ -43,6 +43,9 @@ def update(args):
     if filename == 'lib.py':
       content = re.sub(r"'version': '\d+\.\d+\.\d+'", "'version': '{}'".format(version), content)
 
+    if filename == 'README.md':
+      content = re.sub(r"# v\d+\.\d+\.\d+", "# v{}".format(version), content)
+
     return content
 
 APPDATA = {
@@ -53,4 +56,5 @@ APPDATA = {
 }
 
 print(call(APPDATA[argv[-1]], argv))
+
 

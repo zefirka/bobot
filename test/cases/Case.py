@@ -27,9 +27,11 @@ def clear(response, **opts):
     return response
 
 class Case:
-    def __init__(self, rules, cases):
+    def __init__(self, rules, cases, attrs={}):
         self.rules = rules
         self.cases = cases
+        self.before = attrs.get('before')
+        self.awaits = attrs.get('awaits')
 
     def check(self, bot):
         for case in self.cases:
@@ -66,6 +68,13 @@ class Case:
                     if not response == expected:
                         return False
         return True
+
+    def bring(self, data):
+        setattr(self, 'after', data)
+
+    def checkAfter(self, bot):
+        self.check(bot)
+        return self.after
 
     def handlerError(self, bot, errorClass):
         #pylint: disable=broad-except

@@ -4,7 +4,7 @@
 import re
 
 from bobot.Errors import RuleNameError
-from bobot.utils import execValue, isFn, instanceof
+from bobot.utils import execValue, isFn, instanceof, someOf
 from bobot.Response import Response, Message
 
 def isResponseClass(i):
@@ -94,7 +94,7 @@ def getResponder(response, bot, update, body):
 class Rule(object):
     "Rules class"
 
-    __alowedRules = ['name', 'match', 'response', 'command', 'action', 'parse', 'transform']
+    __alowedRules = ['name', 'match', 'response', 'command', 'action', 'parse', 'transform', 'after', 'command']
 
     @staticmethod
     def all(*args):
@@ -111,6 +111,7 @@ class Rule(object):
 
     def __init__(self, d):
         self.match = None
+        self.command = None
 
         for key in d:
             if key in self.__alowedRules:
@@ -118,8 +119,18 @@ class Rule(object):
             else:
                 raise RuleNameError('Rule property: "{}" is invalid'.format(key))
 
-        if hasattr(self, 'command'):
-            self.addMatching('/' + self.command)
+        if not self.match and not self.command:
+            raise Exception('Rule have not matcher and command at same time')
+
+    def getCommandMatcher(self, bot):
+        """
+            Returns matcher for any type of command e.g.
+            /commandName
+            /commandName@bot_name
+        """
+
+        if self.command:
+            return getMatcher(re.compile(r'^/{command}(@{name})?$'.format(command=self.command, name=bot.name), re.I))
 
     def execRule(self, bot, update):
         """
@@ -144,7 +155,13 @@ class Rule(object):
                 print('Parsing Error:')
                 print(error)
 
-        matcher = getMatcher(self.match)
+        matcher = lambda x: False
+
+        if self.match:
+            matcher = getMatcher(self.match)
+
+        if self.command:
+            matcher = someOf(matcher, self.getCommandMatcher(bot))
 
         if matcher(body):
             if hasattr(self, 'transform'):
@@ -157,7 +174,12 @@ class Rule(object):
                 self.action(bot, update, body)
 
             if hasattr(self, 'response'):
-                return getResponder(self.response, bot, update, body)
+                responseResult = getResponder(self.response, bot, update, body)
+
+                if hasattr(self, 'after'):
+                    self.after(responseResult, bot, update)
+
+                return responseResult
 
     def on(self, text, action):
         "Create rule assigned on text"
