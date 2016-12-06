@@ -48,6 +48,9 @@ class Message:
         text = message.get('text')
         sender = message.get('from', {})
         senderId = sender.get('id')
+        chatId = message.get('chat', {}).get('id')
+
+        responseId = chatId if not self.options.get('direct') else senderId
 
         data = {
             'text': text,
@@ -61,7 +64,7 @@ class Message:
         if not instanceof(methodArgs, [dict, tuple]):
             methodArgs = [methodArgs]
 
-        sendArguments = [senderId] + list(methodArgs)
+        sendArguments = [responseId] + list(methodArgs)
 
         options = self.getOptions()
         options = {'options': options}

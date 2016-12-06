@@ -12,8 +12,3 @@ setup(
   keywords = ['telegram', 'bot', 'api'],
   classifiers = []
 )
-
-
-
-
-
