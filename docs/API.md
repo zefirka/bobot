@@ -14,6 +14,18 @@ print(bot.about())
 
 ## Methods
 
+#### init
+Creates `Bot` class instance. 
+
+```
+bot = bobot.init(<str: token>, [str: username])
+```
+
+Where: 
+ - `token` - bot's token
+ - `username` - bot's username (e.g. @mybot)
+
+
 #### setWebhook
 Sets webhook. 
 ```python

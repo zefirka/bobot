@@ -2,6 +2,13 @@
 
 ## 0.1.*
 
+### 0.1.5
+ - + Added `Rule.xor` helper
+ - + Added `check` property into Rule
+ - + Improved documentation
+ - + Added tests for `check` property and `Rule.xor`
+ - * Fixed #8
+
 ### 0.1.4
  - + Added `after` rule property
  - + Added `command` rule property

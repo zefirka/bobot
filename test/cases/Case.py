@@ -48,8 +48,12 @@ class Case:
                 response = resultItem if isinstance(resultItem, dict) else json.loads(resultItem)
                 expectedItem = expecteds[i]
 
-                expectedValue = expectedItem[0]
-                expectedOptions = expectedItem[1]
+                try:
+                    expectedValue = expectedItem[0]
+                    expectedOptions = expectedItem[1]
+                except Exception:
+                    expectedValue = expectedItem
+                    expectedOptions = {}
 
                 expected = expectedValue
 
