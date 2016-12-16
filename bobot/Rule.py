@@ -1,4 +1,3 @@
-
 "Module containes Rule class"
 
 import re
@@ -8,7 +7,11 @@ from bobot.utils import execValue, isFn, instanceof, someOf
 from bobot.Response import Response, Message
 
 def isResponseClass(i):
-    "Checks is item is response class"
+    """
+       Checks is item is response class (one of Response and Message)
+       @param {*} i
+       @return {bool}
+    """
     return instanceof(i, [Response, Message])
 
 __retype = type(re.compile('re'))
@@ -71,9 +74,19 @@ def formatResponse(response, update, body):
     )
 
 def getResponder(response, bot, update, body):
-    "Calculates responder for given response by type"
+    """
+        Calculates responder for given response by type
+
+        @param {*}    response
+        @param {Bot}  bot
+        @param {dict} update
+        @param {*}    body
+        @return {dict}
+    """
+    isResponseDirect = False
 
     if isinstance(response, dict):
+        isResponseDirect = response.get('direct', False)
         response = Response(response)
 
     if isResponseClass(response):
@@ -88,17 +101,32 @@ def getResponder(response, bot, update, body):
     response = execValue(response, [body, bot])
     response = formatResponse(response, update, body)
 
-    userId = update.get('message', {}).get('from', {}).get('id')
-    return bot.sendMessage(userId, response)
+    message = update.get('message', {})
+    userId = message.get('from', {}).get('id')
+    chatId = message.get('chat', {}).get('id')
+    responseId = userId if isResponseDirect else chatId
+
+    return bot.sendMessage(responseId, response)
 
 class Rule(object):
     "Rules class"
 
-    __alowedRules = ['name', 'match', 'response', 'command', 'action', 'parse', 'transform', 'after', 'command']
+    __alowedRules = [
+        'name',
+        'match',
+        'response',
+        'command',
+        'action',
+        'parse',
+        'transform',
+        'after',
+        'command',
+        'check'
+    ]
 
     @staticmethod
     def all(*args):
-        "Helper method"
+        "Helper method: return matcher for EVERY argument matcher"
 
         def matcher(text):
             "Matcher"
@@ -107,6 +135,16 @@ class Rule(object):
                 if not matcher(text):
                     return False
             return True
+        return matcher
+
+    @staticmethod
+    def xor(*args):
+        "Helper method: return matcher for ONE OF argument matcher"
+
+        def matcher(text):
+            "Matcher"
+            matches = len(list(filter(bool, map(lambda arg: getMatcher(arg)(text), args))))
+            return matches == 1
         return matcher
 
     def __init__(self, d):
@@ -146,6 +184,10 @@ class Rule(object):
         senderId = sender.get('id')
 
         body = text
+
+        if hasattr(self, 'check'):
+            if not self.check(update):
+                return None
 
         if hasattr(self, 'parse'):
             #pylint: disable=broad-except

@@ -49,3 +49,4 @@ bot.rule(rule)
 ### [Bot API](https://github.com/zefirka/bobot/tree/master/docs/API.md)
 ### [Rules](https://github.com/zefirka/bobot/tree/master/docs/Rule.md)
 ### [Responses](https://github.com/zefirka/bobot/tree/master/docs/Responses.md)
+

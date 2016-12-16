@@ -16,6 +16,8 @@ from cases.response.text import *
 from cases.response.photo import *
 from cases.after import afterTests, testResultOkCalls
 from cases.commands import *
+from cases.rule.check import checkTrue, checkFalse, checkUpdateName
+from cases.rule.all import checkAll, checkOr, checkXor
 
 from constants import DEV_BOT_TOKEN
 
@@ -143,5 +145,31 @@ class BotTestCases(unittest.TestCase):
         bot1 = bobot.init('a')
         bot2 = bobot.init('b')
         self.assertTrue(bot1.getToken() != bot2.getToken())
+
+class RuleCheckTestCases(unittest.TestCase):
+    def testCheckTrue(self):
+        bot = getBot(checkTrue.rules)
+        self.assertTrue(checkTrue.check(bot))
+
+    def testCheckFalse(self):
+        bot = getBot(checkFalse.rules)
+        self.assertFalse(checkFalse.check(bot))
+
+    def testCheckUpdateName(self):
+        bot = getBot(checkUpdateName.rules)
+        self.assertTrue(checkUpdateName.check(bot))
+
+class RuleOrXorAllTestCases(unittest.TestCase):
+    def testCheckOr(self):
+        bot = getBot(checkOr.rules)
+        self.assertTrue(checkOr.check(bot))
+
+    def testCheckXor(self):
+        bot = getBot(checkXor.rules)
+        self.assertTrue(checkXor.check(bot))
+
+    def testCheckAll(self):
+        bot = getBot(checkAll.rules)
+        self.assertTrue(checkAll.check(bot))
 
 unittest.main()
